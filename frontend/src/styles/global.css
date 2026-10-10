@@ -306,19 +306,19 @@ p {
   gap:20px
 }
 .welcome-banner {
-  position:relative;
-  overflow:hidden;
-  min-height:270px;
-  border-radius:22px;
-  padding:31px 34px 26px;
-  background:linear-gradient(112deg,#1c5538,#2c754d 60%,#7fa66a);
-  color:white;
-  box-shadow:var(--shadow)
+position: relative;
+overflow: hidden;
+min-height: 270px;
+border-radius: 22px;
+padding: 31px 34px 26px;
+background: linear-gradient(112deg, #1c5538, #2c754d 60%, #7fa66a);
+color: white;
+box-shadow: var(--shadow);
 }
 .welcome-copy {
-  position:relative;
-  z-index:2;
-  max-width:540px
+position: relative;
+z-index: 2;
+max-width: 540px;
 }
 .pill {
   display:inline-flex;
@@ -348,9 +348,12 @@ p {
   margin-bottom:17px
 }
 .welcome-buttons {
-  display:flex;
-  align-items:center;
-  gap:17px
+display: flex;
+align-items: center;
+flex-wrap: wrap;
+gap: 17px;
+margin-top: 20px;
+margin-bottom: 24px;
 }
 .button {
   display:inline-flex;
@@ -478,14 +481,16 @@ p {
   border-radius:0 0 9px 9px
 }
 .banner-foot {
-  position:absolute;
-  bottom:17px;
-  left:34px;
-  right:34px;
-  display:flex;
-  justify-content:space-between;
-  font-size:9px;
-  color:#e0eee1
+position: relative;
+z-index: 2;
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+justify-content: space-between;
+gap: 10px;
+margin-top: 0;
+font-size: 11px;
+color: #e0eee1;
 }
 .banner-foot i {
   display:inline-block;
