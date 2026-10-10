@@ -1,4 +1,5 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api';
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://treerasa.onrender.com/api';
 
 export const getToken = () => localStorage.getItem('treerasa_token');
 export const getSavedUser = () => {
