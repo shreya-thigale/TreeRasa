@@ -15,7 +15,7 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="TreeRasa API", version="0.1.0", description="Plant health and sustainable care platform API", lifespan=lifespan)
-app.add_middleware(CORSMiddleware, allow_origins=settings.allowed_origins, allow_credentials=True,
+app.add_middleware(CORSMiddleware, allow_origins=["https://tree-rasa.vercel.app"], allow_credentials=True,
                    allow_methods=["*"], allow_headers=["*"])
 for router in (auth.router, plants.router, marketplace.router, care.router, dashboard.router, workspace.router, orders.router, admin.router):
     app.include_router(router, prefix="/api")
