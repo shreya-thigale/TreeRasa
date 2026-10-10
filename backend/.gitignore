@@ -1,0 +1,17 @@
+
+.env
+.venv/
+__pycache__/
+*.py[cod]
+uploads/*
+!uploads/.gitkeep
+
+# Ignore model artifacts except approved files
+model_artifacts/*
+!model_artifacts/.gitkeep
+!model_artifacts/plant_disease_model.keras
+!model_artifacts/class_names.json
+!model_artifacts/dataset_counts.json
+!model_artifacts/plant_disease_model_training_history.csv
+!model_artifacts/saved_model_confusion_matrix.csv
+!model_artifacts/saved_model_test_report.json

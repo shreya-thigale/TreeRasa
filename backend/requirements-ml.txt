@@ -1,0 +1,6 @@
+-r requirements.txt
+# TensorFlow versions in this range support Python 3.9–3.12; Python 3.11 is a safe student setup.
+tensorflow>=2.16,<2.20
+scikit-learn>=1.5
+numpy>=1.26,<2.2
+matplotlib>=3.8

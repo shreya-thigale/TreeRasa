@@ -1,0 +1,45 @@
+
+# Secrets and environment variables
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+
+# Python environments and cache
+.ml-venv/
+backend/.venv/
+backend/.venv-ml/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Datasets — do not upload the large training dataset
+dataset/
+raw_dataset/
+backend/dataset/
+backend/raw_dataset/
+
+# Frontend dependencies and build output
+frontend/node_modules/
+frontend/dist/
+
+# Local database files and backups
+backend/treerasa_dev.db
+TreeRasa-backup/
+treerasa.sql
+*.dump
+
+# Local uploads and OS files
+backend/uploads/*
+!backend/uploads/.gitkeep
+.DS_Store
+
+
+# Exclude model files by default, except approved model artifacts
+*.keras
+!backend/model_artifacts/
+backend/model_artifacts/*
+!backend/model_artifacts/*.keras
+!backend/model_artifacts/*.json
+!backend/model_artifacts/*.csv
