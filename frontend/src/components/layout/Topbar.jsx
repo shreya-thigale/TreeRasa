@@ -1,0 +1,10 @@
+import { Bell, Moon, Sun, Search, Menu, LogOut } from 'lucide-react'
+import { useTheme } from '../../context/ThemeContext'
+import { useAuth } from '../../context/AuthContext'
+export default function Topbar({onMenu}) {
+ const {theme,toggleTheme}=useTheme(); const {user,logout}=useAuth()
+ return <header className="sticky top-0 z-20 flex h-[76px] items-center justify-between border-b border-stone-200/80 bg-[#f8faf7]/90 px-4 backdrop-blur-xl dark:border-white/10 dark:bg-[#101a14]/90 sm:px-7">
+  <div className="flex items-center gap-3"><button onClick={onMenu} className="rounded-xl p-2 hover:bg-stone-100 dark:hover:bg-white/10 lg:hidden" aria-label="Open menu"><Menu size={20}/></button><div className="relative hidden sm:block"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={17}/><input placeholder="Search your workspace…" className="w-64 rounded-xl border-0 bg-white py-2.5 pl-10 pr-4 text-sm outline-none ring-1 ring-stone-200 focus:ring-forest-500 dark:bg-white/5 dark:ring-white/10"/></div></div>
+  <div className="flex items-center gap-2"><button onClick={toggleTheme} className="rounded-xl p-2.5 hover:bg-stone-100 dark:hover:bg-white/10" aria-label="Toggle theme">{theme==='dark'?<Sun size={19}/>:<Moon size={19}/>}</button><button className="relative rounded-xl p-2.5 hover:bg-stone-100 dark:hover:bg-white/10" aria-label="Notifications"><Bell size={19}/><i className="absolute right-2 top-2 h-2 w-2 rounded-full bg-amber-500"/></button><div className="ml-1 hidden h-9 w-9 place-items-center rounded-full bg-forest-100 font-bold text-forest-800 sm:grid">{user?.full_name?.slice(0,1)?.toUpperCase()||'T'}</div><div className="hidden sm:block"><p className="max-w-36 truncate text-sm font-bold">{user?.full_name}</p><p className="text-xs capitalize text-stone-500">{user?.role}</p></div><button onClick={logout} title="Sign out" className="rounded-xl p-2.5 text-stone-500 hover:bg-stone-100 dark:hover:bg-white/10"><LogOut size={18}/></button></div>
+ </header>
+}

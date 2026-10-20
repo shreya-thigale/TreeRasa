@@ -1,0 +1,4 @@
+export default function StatCard({icon:Icon,label,value,caption,accent='green'}) {
+ const accents={green:'bg-forest-50 text-forest-700 dark:bg-forest-900/50 dark:text-forest-200',amber:'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200',blue:'bg-sky-50 text-sky-700 dark:bg-sky-900/30 dark:text-sky-200',violet:'bg-violet-50 text-violet-700 dark:bg-violet-900/30 dark:text-violet-200'}
+ return <div className="rounded-2xl border border-stone-200/70 bg-white p-5 shadow-soft dark:border-white/10 dark:bg-[#17251b]"><div className="flex items-start justify-between gap-3"><div><p className="text-sm font-medium text-stone-500 dark:text-stone-400">{label}</p><p className="mt-3 font-display text-3xl font-extrabold tracking-tight">{value}</p></div><span className={`grid h-11 w-11 place-items-center rounded-2xl ${accents[accent]}`}><Icon size={21}/></span></div><p className="mt-3 text-xs text-stone-500 dark:text-stone-400">{caption}</p></div>
+}

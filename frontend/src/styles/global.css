@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { font-family:'DM Sans',sans-serif; font-synthesis:none; text-rendering:optimizeLegibility; }
+* { box-sizing:border-box; }
+body { margin:0; min-width:320px; background:#f6f8f4; color:#20382c; }
+.dark body { background:#101a14; color:#e8f1e9; }
+button,input,textarea,select { font:inherit; }
+button { cursor:pointer; }
+::selection { background:#cce8d2; color:#164b34; }
+
+@layer components {
+ .field { @apply mt-1.5 w-full rounded-xl border border-stone-200 bg-white px-3.5 py-3 text-sm outline-none transition placeholder:text-stone-400 focus:border-forest-500 focus:ring-2 focus:ring-forest-100 dark:border-white/10 dark:bg-white/5 dark:text-stone-100 dark:focus:ring-forest-900; }
+}
