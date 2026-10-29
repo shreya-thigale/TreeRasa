@@ -121,7 +121,7 @@ export default function ScanPage() {
             <option value="Cotton">Cotton</option>
             <option value="Wheat">Wheat</option>
             <option value="">Other</option>
-          </select>
+          </select>gi
 
           <label className="mt-5 flex min-h-52 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-stone-300 bg-stone-50/70 p-6 text-center hover:border-forest-500 dark:border-white/20 dark:bg-white/5">
             <UploadCloud
