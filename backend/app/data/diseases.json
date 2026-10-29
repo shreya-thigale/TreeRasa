@@ -1,0 +1,21 @@
+{
+  "Tomato Early Blight": {
+    "symptoms": [
+      "Brown spots on lower leaves",
+      "Yellow halo around spots",
+      "Leaves dry and fall"
+    ],
+    "cause": "Fungus Alternaria solani",
+    "treatment": [
+      "Remove infected leaves",
+      "Apply fungicide",
+      "Avoid overhead watering"
+    ],
+    "fertilizer": "Balanced NPK fertilizer",
+    "prevention": [
+      "Crop rotation",
+      "Use healthy seeds",
+      "Maintain proper spacing"
+    ]
+  }
+}

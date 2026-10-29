@@ -9,6 +9,8 @@ import ScanPage from '../features/scan/ScanPage'
 import ProfilePage from '../features/profile/ProfilePage'
 import AuthPage from '../pages/AuthPage'
 import ChatbotWidget from '../components/common/ChatbotWidget'
+import ChatbotPage from '../features/chatbot/ChatbotPage'
+
 
 function Protected({children,roles}) { return <ProtectedRoute roles={roles}>{children}</ProtectedRoute> }
 export default function App(){
@@ -23,6 +25,7 @@ export default function App(){
    <Route path="/orders" element={<OrdersPage/>}/>
    <Route path="/sales" element={<OrdersPage/>}/>
    <Route path="/profile" element={<ProfilePage/>}/>
+   <Route path="/chatbot" element={<ChatbotPage/>}/>
   </Route>
   <Route path="/" element={<Navigate to="/dashboard" replace/>}/><Route path="*" element={<Navigate to="/dashboard" replace/>}/>
  </Routes><ChatbotWidget/></>

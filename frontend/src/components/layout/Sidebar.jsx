@@ -1,8 +1,17 @@
 import { NavLink } from 'react-router-dom'
-import { Sprout, LayoutDashboard, ScanLine, ShoppingBasket, Package, ClipboardList, ChartNoAxesCombined, UserRound, Leaf } from 'lucide-react'
+import { Sprout, LayoutDashboard, ScanLine, ShoppingBasket, Package, ClipboardList, ChartNoAxesCombined, UserRound, Store, Leaf, Bot } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useLanguage } from '../../context/LanguageContext'
 
+const common=[
+ {to:'/dashboard',label:'Overview',icon:LayoutDashboard},
+ {to:'/scan',label:'Plant health scan',icon:ScanLine},
+ {to:'/chatbot',label:'PlantCare AI',icon:Bot},
+ {to:'/marketplace/produce',label:'Fresh from farms',icon:Leaf},
+ {to:'/marketplace/supplies',label:'Seeds & fertilizers',icon:ShoppingBasket},
+ {to:'/orders',label:'Orders',icon:ClipboardList},
+ {to:'/profile',label:'My profile',icon:UserRound}
+]
 export default function Sidebar(){
  const {user}=useAuth()
  const {t}=useLanguage()
