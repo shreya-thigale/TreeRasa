@@ -19,7 +19,10 @@ CREATE USER treerasa WITH PASSWORD 'replace_this_password';
 CREATE DATABASE treerasa OWNER treerasa;
 ```
 
-Copy `.env.example` to `backend/.env` and update `DATABASE_URL` and `JWT_SECRET_KEY`.\n\nTo enable the public multilingual TreeRasa Assistant, create a Gemini API key in Google AI Studio and set `GEMINI_API_KEY` in `backend/.env`. Keep this key only on the backend; never add it to frontend/Vercel client variables. The optional `GEMINI_MODEL` defaults to `gemini-2.5-flash`. Without a key, the chat widget appears but the API returns a clear setup message.\n
+Copy `.env.example` to `backend/.env` and update `DATABASE_URL` and `JWT_SECRET_KEY`.
+
+To enable the public multilingual TreeRasa Assistant, create a Gemini API key in Google AI Studio and set `GEMINI_API_KEY` in `backend/.env`. Keep this key only on the backend; never add it to frontend/Vercel client variables. The optional `GEMINI_MODEL` defaults to `gemini-2.5-flash`. Without a key, the chat widget appears but the API returns a clear setup message.
+
 Do not commit `.env`.
 
 ## 2. Backend
@@ -32,7 +35,9 @@ uvicorn app.main:app --reload
 ```
 The first run creates missing tables with SQLAlchemy. For a production deployment, use Alembic migrations before changing schemas. Existing tables are not automatically migrated by `create_all()`.
 
-API docs: http://localhost:8000/docs\n\nThe public assistant endpoint is `POST /api/chat`; it does not require a TreeRasa login. It accepts `message`, `language` (`en`, `hi`, or `mr`) and up to eight recent conversation messages.
+API docs: http://localhost:8000/docs
+
+The public assistant endpoint is `POST /api/chat`; it does not require a TreeRasa login. It accepts `message`, `language` (`en`, `hi`, or `mr`) and up to eight recent conversation messages.
 
 Register one of the roles `farmer`, `vendor`, or `user` through the UI. The public API intentionally does not allow self-registration as admin.
 
