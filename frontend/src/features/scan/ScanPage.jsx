@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { ScanLine, UploadCloud, Leaf, Clock3 } from 'lucide-react'
 import { scansApi } from '../../api/scans.api'
+import { apiBlob } from '../../api/client'
 
 const MAX_FILE_SIZE = 8 * 1024 * 1024
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
@@ -14,10 +15,21 @@ export default function ScanPage() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [historyError, setHistoryError] = useState('')
+  const [previewUrl, setPreviewUrl] = useState('')
+  const [historyImages, setHistoryImages] = useState({})
 
   async function loadHistory() {
     try {
-      setHistory(await scansApi.mine())
+      const scans = await scansApi.mine()
+      setHistory(scans)
+      const imageEntries = await Promise.all(scans.map(async (scan) => {
+        if (!scan.image_url) return [scan.id, '']
+        try {
+          const blob = await apiBlob(scan.image_url.replace(/^\\/api/, ''))
+          return [scan.id, URL.createObjectURL(blob)]
+        } catch { return [scan.id, ''] }
+      }))
+      setHistoryImages(Object.fromEntries(imageEntries))
       setHistoryError('')
     } catch (err) {
       setHistoryError(err.message || 'Could not load scan history.')
@@ -50,6 +62,8 @@ export default function ScanPage() {
     }
 
     setFile(selected)
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setPreviewUrl(URL.createObjectURL(selected))
   }
 
   async function submit(event) {
@@ -63,6 +77,11 @@ export default function ScanPage() {
     try {
       const data = await scansApi.create(file, crop)
       setResult(data)
+      if (data.image_url) {
+        const blob = await apiBlob(data.image_url.replace(/^\\/api/, ''))
+        if (previewUrl) URL.revokeObjectURL(previewUrl)
+        setPreviewUrl(URL.createObjectURL(blob))
+      }
       await loadHistory()
     } catch (err) {
       setError(err.message || 'The scan failed. Please try again.')
@@ -128,6 +147,7 @@ export default function ScanPage() {
               className="mb-3 text-forest-700 dark:text-forest-200"
               size={32}
             />
+            {previewUrl && <img src={previewUrl} alt="Selected plant preview" className="mb-3 max-h-40 max-w-full rounded-xl object-contain" />}
             <span className="break-all font-bold">
               {file ? file.name : 'Choose a plant image'}
             </span>
@@ -223,9 +243,7 @@ export default function ScanPage() {
               className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-stone-200/70 bg-white p-4 dark:border-white/10 dark:bg-[#17251b]"
             >
               <div className="flex items-center gap-3">
-                <span className="grid h-10 w-10 place-items-center rounded-xl bg-forest-50 text-forest-700 dark:bg-forest-900/50 dark:text-forest-100">
-                  <Clock3 size={18} />
-                </span>
+                {historyImages[scan.id] ? <img src={historyImages[scan.id]} alt={scan.crop_name || 'Scanned plant'} className="h-12 w-12 rounded-lg object-cover" /> : <span className="grid h-10 w-10 place-items-center rounded-xl bg-forest-50 text-forest-700 dark:bg-forest-900/50 dark:text-forest-100"><Clock3 size={18} /></span>}
                 <div>
                   <p className="font-bold">{scan.predicted_disease}</p>
                   <p className="text-xs text-stone-500">
