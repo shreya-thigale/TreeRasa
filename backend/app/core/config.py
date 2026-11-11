@@ -6,6 +6,8 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 1440
     cors_origins: str = "http://localhost:5173"
     max_upload_mb: int = 8
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-2.5-flash"
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     @property
