@@ -21,7 +21,7 @@ export default function OrdersPage(){
  function openReview(item){setReviewItem(item);setRating(0);setHoverRating(0);setComment('');setError('');setSuccess('')}
  async function submitReview(){
   if(!reviewItem||rating<1)return
-  try{setReviewBusy(true);await ordersApi.review({order_item_id:reviewItem.id,rating,comment});setSuccess('Thank you! {t('yourReview')} has been published.');setReviewItem(null);await load()}
+  try{setReviewBusy(true);await ordersApi.review({order_item_id:reviewItem.id,rating,comment});setSuccess(t('reviewPublished'));setReviewItem(null);await load()}
   catch(e){setError(e.message)}
   finally{setReviewBusy(false)}
  }
