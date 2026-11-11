@@ -9,6 +9,7 @@ from app.models.product import Product
 from app.models.order import Order, OrderItem
 from app.schemas import CheckoutIn, OrderStatusIn, ReviewIn
 from app.models.review import Review
+from app.models.notification import Notification
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
@@ -48,6 +49,9 @@ def checkout(payload: CheckoutIn, db: Session = Depends(get_db), user: User = De
             p.stock -= qty
             db.add(OrderItem(order_id=order.id, product_id=p.id, product_title=p.title, quantity=qty, unit_price=p.price))
         created.append(order)
+        product_names = ', '.join(p.title for p, _ in entries)
+        db.add(Notification(user_id=seller_id, title='New order received', message=f'{user.full_name} placed an order for {product_names}.', kind='order'))
+        db.add(Notification(user_id=user.id, title='Order placed successfully', message=f'Your order {order.order_number} has been placed.', kind='order'))
     db.commit()
     return {"orders": [{"id": o.id, "order_number": o.order_number, "seller_id": o.seller_id,
                         "status": o.status, "total_amount": o.total_amount} for o in created]}
@@ -72,6 +76,7 @@ def update_status(order_id: int, payload: OrderStatusIn, db: Session = Depends(g
             product = db.get(Product, item.product_id)
             if product: product.stock += item.quantity
     order.status = payload.status
+    db.add(Notification(user_id=order.buyer_id, title='Order status updated', message=f'Your order {order.order_number} is now {payload.status}.', kind='order'))
     db.commit()
     return {"ok": True, "status": order.status}
 
