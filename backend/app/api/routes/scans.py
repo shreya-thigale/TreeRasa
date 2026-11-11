@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Response
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.db.session import get_db
@@ -9,11 +9,12 @@ from app.services.inference import predict_plant
 from app.core.config import settings
 
 router = APIRouter(prefix="/scans", tags=["Plant scans"])
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
 @router.post("")
 async def create_scan(file: UploadFile = File(...), crop_name: str | None = None,
                       db: Session = Depends(get_db), user: User = Depends(current_user)):
-    if file.content_type not in ("image/jpeg", "image/png", "image/webp"):
+    if file.content_type not in ALLOWED_IMAGE_TYPES:
         raise HTTPException(415, "Upload a JPG, PNG or WEBP image.")
     image = await file.read()
     if len(image) > settings.max_upload_mb * 1024 * 1024:
@@ -29,7 +30,16 @@ async def create_scan(file: UploadFile = File(...), crop_name: str | None = None
 def scan_out(s: PlantScan):
     return {"id": s.id, "crop_name": s.crop_name, "predicted_disease": s.predicted_disease,
             "confidence": s.confidence, "recommendations": s.recommendations, "status": s.status,
+            "image_url": f"/api/scans/{s.id}/image" if s.image_data else None,
             "created_at": s.created_at.isoformat()}
+
+@router.get("/{scan_id}/image")
+def scan_image(scan_id: int, db: Session = Depends(get_db), user: User = Depends(current_user)):
+    scan = db.get(PlantScan, scan_id)
+    if not scan or scan.user_id != user.id or not scan.image_data:
+        raise HTTPException(404, "Scan image not found.")
+    return Response(content=scan.image_data, media_type=scan.image_mime or "application/octet-stream",
+                    headers={"Cache-Control": "private, max-age=3600"})
 
 @router.get("/mine")
 def my_scans(db: Session = Depends(get_db), user: User = Depends(current_user)):
