@@ -14,7 +14,8 @@ const dictionaries = {
   rolePrompt:'I am a',farmerRole:'Farmer',vendorRole:'Vendor',userRole:'Regular user',alreadyAccount:'Already have an account?',newToTreeRasa:'New to TreeRasa?',
   scanNoticeTitle:'Plant scan completed',scanNoticeMessage:'Your plant scan is ready. Open Plant health scan to view the result and recommendations.',orderNoticeTitle:'Order update',orderNoticeMessage:'There is an update to your order. Open Orders to see the latest status.',reviewNoticeTitle:'New product review',reviewNoticeMessage:'A customer has left a review. Open Sales & customers to view feedback.',
   chooseRole:'Choose your role to get a workspace built for you.',reviewPublished:'Thank you! Your review has been published.',
-  signIn:'Sign in',createAccount:'Create account',email:'Email address',password:'Password',fullName:'Full name',phone:'Phone number',location:'Village / City / District',farmName:'Farm / Business name'
+  signIn:'Sign in',createAccount:'Create account',email:'Email address',password:'Password',fullName:'Full name',phone:'Phone number',location:'Village / City / District',farmName:'Farm / Business name',
+  chatTitle:'TreeRasa Assistant',chatAvailable:'Here to help with farming',chatAi:'AI assistant',chatGreeting:'Namaste! 🌱 I can help with crops, soil, irrigation, plant health and using TreeRasa. What would you like to know?',chatSubtitle:'Farming guidance in your language',chatTryAsking:'Try asking',chatPlaceholder:'Ask about crops, farming or TreeRasa…',sendMessage:'Send message',closeChat:'Close chat',openChat:'Open TreeRasa Assistant',chatThinking:'Preparing an answer…',chatError:'Unable to reach the assistant. Please try again.',chatDisclaimer:'AI guidance can be imperfect. Confirm important crop decisions with a local agriculture expert.'
  },
  hi: {
   language:'भाषा',english:'English',hindi:'हिन्दी',marathi:'मराठी',
@@ -29,7 +30,8 @@ const dictionaries = {
   rolePrompt:'मैं हूँ',farmerRole:'किसान',vendorRole:'विक्रेता',userRole:'सामान्य उपयोगकर्ता',alreadyAccount:'पहले से खाता है?',newToTreeRasa:'ट्रीरसा पर नए हैं?',
   scanNoticeTitle:'पौधों की जाँच पूरी हुई',scanNoticeMessage:'आपकी पौधों की जाँच पूरी हो गई है। परिणाम और सुझाव देखने के लिए जाँच पृष्ठ खोलें।',orderNoticeTitle:'ऑर्डर अपडेट',orderNoticeMessage:'आपके ऑर्डर में अपडेट है। नई स्थिति देखने के लिए ऑर्डर खोलें।',reviewNoticeTitle:'नई उत्पाद समीक्षा',reviewNoticeMessage:'एक ग्राहक ने समीक्षा दी है। प्रतिक्रिया देखने के लिए बिक्री और ग्राहक पृष्ठ खोलें।',
   chooseRole:'अपनी ज़रूरत के अनुसार भूमिका चुनें।',reviewPublished:'धन्यवाद! आपकी समीक्षा प्रकाशित हो गई है।',
-  signIn:'साइन इन',createAccount:'खाता बनाएँ',email:'ईमेल पता',password:'पासवर्ड',fullName:'पूरा नाम',phone:'फ़ोन नंबर',location:'गाँव / शहर / ज़िला',farmName:'खेत / व्यवसाय का नाम'
+  signIn:'साइन इन',createAccount:'खाता बनाएँ',email:'ईमेल पता',password:'पासवर्ड',fullName:'पूरा नाम',phone:'फ़ोन नंबर',location:'गाँव / शहर / ज़िला',farmName:'खेत / व्यवसाय का नाम',
+  chatTitle:'ट्रीरसा सहायक',chatAvailable:'खेती में मदद के लिए उपलब्ध',chatAi:'AI सहायक',chatGreeting:'नमस्ते! 🌱 मैं फसल, मिट्टी, सिंचाई, पौधों की सेहत और ट्रीरसा इस्तेमाल करने में आपकी मदद कर सकता हूँ। आप क्या जानना चाहेंगे?',chatSubtitle:'आपकी भाषा में खेती की जानकारी',chatTryAsking:'यह पूछकर देखें',chatPlaceholder:'फसल, खेती या ट्रीरसा के बारे में पूछें…',sendMessage:'संदेश भेजें',closeChat:'चैट बंद करें',openChat:'ट्रीरसा सहायक खोलें',chatThinking:'जवाब तैयार हो रहा है…',chatError:'सहायक से संपर्क नहीं हो पाया। कृपया फिर कोशिश करें।',chatDisclaimer:'AI की सलाह में त्रुटि हो सकती है। फसल से जुड़े महत्वपूर्ण निर्णय स्थानीय कृषि विशेषज्ञ से जाँचें।'
  },
  mr: {
   language:'भाषा',english:'English',hindi:'हिन्दी',marathi:'मराठी',
@@ -44,7 +46,8 @@ const dictionaries = {
   rolePrompt:'मी आहे',farmerRole:'शेतकरी',vendorRole:'विक्रेता',userRole:'सामान्य वापरकर्ता',alreadyAccount:'आधीच खाते आहे?',newToTreeRasa:'ट्रीरसा वर नवीन आहात?',
   scanNoticeTitle:'पीक तपासणी पूर्ण झाली',scanNoticeMessage:'तुमची पीक तपासणी पूर्ण झाली आहे. निकाल आणि सूचना पाहण्यासाठी तपासणी पृष्ठ उघडा.',orderNoticeTitle:'ऑर्डर अपडेट',orderNoticeMessage:'तुमच्या ऑर्डरमध्ये अपडेट आहे. नवीन स्थिती पाहण्यासाठी ऑर्डर्स उघडा.',reviewNoticeTitle:'नवीन उत्पादन अभिप्राय',reviewNoticeMessage:'ग्राहकाने अभिप्राय दिला आहे. तो पाहण्यासाठी विक्री आणि ग्राहक पृष्ठ उघडा.',
   chooseRole:'तुमच्या गरजेनुसार भूमिका निवडा.',reviewPublished:'धन्यवाद! तुमचा अभिप्राय प्रसिद्ध झाला आहे.',
-  signIn:'साइन इन',createAccount:'खाते तयार करा',email:'ईमेल पत्ता',password:'पासवर्ड',fullName:'पूर्ण नाव',phone:'फोन नंबर',location:'गाव / शहर / जिल्हा',farmName:'शेत / व्यवसायाचे नाव'
+  signIn:'साइन इन',createAccount:'खाते तयार करा',email:'ईमेल पत्ता',password:'पासवर्ड',fullName:'पूर्ण नाव',phone:'फोन नंबर',location:'गाव / शहर / जिल्हा',farmName:'शेत / व्यवसायाचे नाव',
+  chatTitle:'ट्रीरसा सहाय्यक',chatAvailable:'शेतीविषयक मदतीसाठी उपलब्ध',chatAi:'AI सहाय्यक',chatGreeting:'नमस्कार! 🌱 पिके, माती, सिंचन, पिकांचे आरोग्य आणि ट्रीरसा वापरण्याबाबत मी मदत करू शकतो. तुम्हाला काय जाणून घ्यायचे आहे?',chatSubtitle:'तुमच्या भाषेत शेतीविषयक मार्गदर्शन',chatTryAsking:'असे प्रश्न विचारून पहा',chatPlaceholder:'पीक, शेती किंवा ट्रीरसा याबद्दल विचारा…',sendMessage:'संदेश पाठवा',closeChat:'चॅट बंद करा',openChat:'ट्रीरसा सहाय्यक उघडा',chatThinking:'उत्तर तयार होत आहे…',chatError:'सहाय्यकाशी संपर्क होऊ शकला नाही. पुन्हा प्रयत्न करा.',chatDisclaimer:'AI मार्गदर्शनात चुका असू शकतात. पिकांबाबत महत्त्वाचे निर्णय स्थानिक कृषी तज्ज्ञांकडून तपासून घ्या.'
  }
 }
 
