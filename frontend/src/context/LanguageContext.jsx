@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 const dictionaries = {
  en: {
@@ -52,6 +52,7 @@ const LanguageContext = createContext(null)
 export function LanguageProvider({children}) {
  const [language,setLanguageState] = useState(()=>{try{const saved=localStorage.getItem('treerasa_language');return dictionaries[saved]?saved:'en'}catch{return 'en'}})
  function setLanguage(value){if(!dictionaries[value])return;setLanguageState(value);try{localStorage.setItem('treerasa_language',value)}catch{}}
+ useEffect(()=>{if(typeof document!=='undefined')document.documentElement.lang=language},[language])
  const value=useMemo(()=>({language,setLanguage,t:(key)=>dictionaries[language]?.[key]??dictionaries.en[key]??key}),[language])
  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
 }
