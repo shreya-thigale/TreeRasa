@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { Sprout, LayoutDashboard, ScanLine, ShoppingBasket, Package, ClipboardList, ChartNoAxesCombined, UserRound, Store, Leaf } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
-const common=[{to:'/dashboard',label:'Overview',icon:LayoutDashboard},{to:'/scan',label:'Plant health scan',icon:ScanLine},{to:'/marketplace/produce',label:'Fresh from farms',icon:Leaf},{to:'/marketplace/supplies',label:'Seeds & fertilizers',icon:ShoppingBasket},{to:'/orders',label:'Orders',icon:ClipboardList},{to:'/profile',label:'My profile',icon:UserRound}]
+const common=[{to:'/dashboard',label:'Overview',icon:LayoutDashboard},...(user?.role==='farmer'||user?.role==='user'?[{to:'/scan',label:'Plant health scan',icon:ScanLine}]:[]),{to:'/marketplace/produce',label:'Fresh from farms',icon:Leaf},{to:'/marketplace/supplies',label:'Seeds & fertilizers',icon:ShoppingBasket},{to:'/orders',label:'Orders',icon:ClipboardList},{to:'/profile',label:'My profile',icon:UserRound}]
 export default function Sidebar(){
  const {user}=useAuth()
  const extra=user?.role==='farmer'?[{to:'/my-listings',label:'My farm listings',icon:Package},{to:'/sales',label:'Sales & customers',icon:ChartNoAxesCombined}]:user?.role==='vendor'?[{to:'/my-listings',label:'My products',icon:Package},{to:'/sales',label:'Sales & customers',icon:ChartNoAxesCombined}]:[]
