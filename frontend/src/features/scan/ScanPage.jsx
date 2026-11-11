@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
-  ScanLine, UploadCloud, Leaf, Clock3, ImagePlus, CheckCircle2,
+  ScanLine, UploadCloud, Leaf, Clock3, ImagePlus, CheckCircle2, Camera,
   AlertTriangle, Activity, Sprout, RefreshCw, Trash2
 } from 'lucide-react'
 import { scansApi } from '../../api/scans.api'
@@ -21,6 +21,7 @@ function formatStatus(status) {
 }
 
 export default function ScanPage() {
+  const cameraInputRef = useRef(null)
   const [file, setFile] = useState(null)
   const [crop, setCrop] = useState('')
   const [result, setResult] = useState(null)
@@ -200,6 +201,10 @@ export default function ScanPage() {
             )}
             <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={selectFile} />
           </label>
+          <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={selectFile} />
+          <button type="button" onClick={() => cameraInputRef.current?.click()} className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-700/30 bg-white px-4 py-3 text-sm font-bold text-emerald-900 transition hover:bg-emerald-50 dark:border-emerald-700 dark:bg-white/5 dark:text-emerald-100 dark:hover:bg-emerald-950/30">
+            <Camera size={18}/> Take photo with camera
+          </button>
 
           {error && <p role="alert" className="mt-4 rounded-xl bg-rose-50 p-3 text-sm text-rose-700 dark:bg-rose-950/30 dark:text-rose-200">{error}</p>}
 
