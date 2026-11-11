@@ -1,9 +1,17 @@
 import { NavLink } from 'react-router-dom'
-import { Sprout, LayoutDashboard, ScanLine, ShoppingBasket, Package, ClipboardList, ChartNoAxesCombined, UserRound, Store, Leaf } from 'lucide-react'
+import { Sprout, LayoutDashboard, ScanLine, ShoppingBasket, Package, ClipboardList, ChartNoAxesCombined, UserRound, Leaf } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
-const common=[{to:'/dashboard',label:'Overview',icon:LayoutDashboard},...(user?.role==='farmer'||user?.role==='user'?[{to:'/scan',label:'Plant health scan',icon:ScanLine}]:[]),{to:'/marketplace/produce',label:'Fresh from farms',icon:Leaf},{to:'/marketplace/supplies',label:'Seeds & fertilizers',icon:ShoppingBasket},{to:'/orders',label:'Orders',icon:ClipboardList},{to:'/profile',label:'My profile',icon:UserRound}]
+
 export default function Sidebar(){
  const {user}=useAuth()
+ const common=[
+  {to:'/dashboard',label:'Overview',icon:LayoutDashboard},
+  ...(user?.role==='farmer'||user?.role==='user'?[{to:'/scan',label:'Plant health scan',icon:ScanLine}]:[]),
+  {to:'/marketplace/produce',label:'Fresh from farms',icon:Leaf},
+  {to:'/marketplace/supplies',label:'Seeds & fertilizers',icon:ShoppingBasket},
+  {to:'/orders',label:'Orders',icon:ClipboardList},
+  {to:'/profile',label:'My profile',icon:UserRound}
+ ]
  const extra=user?.role==='farmer'?[{to:'/my-listings',label:'My farm listings',icon:Package},{to:'/sales',label:'Sales & customers',icon:ChartNoAxesCombined}]:user?.role==='vendor'?[{to:'/my-listings',label:'My products',icon:Package},{to:'/sales',label:'Sales & customers',icon:ChartNoAxesCombined}]:[]
  return <aside className="hidden w-64 shrink-0 border-r border-stone-200/80 bg-white px-4 py-6 dark:border-white/10 dark:bg-[#142219] lg:flex lg:flex-col">
   <NavLink to="/" className="mb-9 flex items-center gap-3 px-2"><span className="grid h-10 w-10 place-items-center rounded-2xl bg-forest-600 text-white"><Sprout size={22}/></span><span><b className="font-display text-xl tracking-tight">TreeRasa</b><small className="block text-xs text-stone-500">Grow better, naturally</small></span></NavLink>
