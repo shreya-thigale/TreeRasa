@@ -29,7 +29,7 @@ const [maxPrice,setMaxPrice]=useState('');
 const [busy,setBusy]=useState(false);
 const [error,setError]=useState('');
 const [cart,setCart]=useState({});
-const [checkoutOpen,setCheckoutOpen}=useState(false);
+const [checkoutOpen,setCheckoutOpen]=useState(false);
 const [address,setAddress]=useState(user?.location||'');
 
 const isProduce=listingType==='produce';
