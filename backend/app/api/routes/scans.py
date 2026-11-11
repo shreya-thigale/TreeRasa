@@ -14,6 +14,8 @@ ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 @router.post("")
 async def create_scan(file: UploadFile = File(...), crop_name: str | None = None,
                       db: Session = Depends(get_db), user: User = Depends(current_user)):
+    if user.role not in ('farmer', 'user'):
+        raise HTTPException(403, 'Plant health scanning is available to farmers and users only.')
     if file.content_type not in ALLOWED_IMAGE_TYPES:
         raise HTTPException(415, "Upload a JPG, PNG or WEBP image.")
     image = await file.read()
@@ -45,3 +47,25 @@ def scan_image(scan_id: int, db: Session = Depends(get_db), user: User = Depends
 def my_scans(db: Session = Depends(get_db), user: User = Depends(current_user)):
     scans = db.scalars(select(PlantScan).where(PlantScan.user_id == user.id).order_by(PlantScan.created_at.desc())).all()
     return [scan_out(s) for s in scans]
+
+@router.delete("/{scan_id}")
+def delete_scan(scan_id: int, db: Session = Depends(get_db), user: User = Depends(current_user)):
+    if user.role not in ("farmer", "user"):
+        raise HTTPException(403, "Scan history is not available for this account.")
+    scan = db.get(PlantScan, scan_id)
+    if not scan or scan.user_id != user.id:
+        raise HTTPException(404, "Scan not found.")
+    db.delete(scan)
+    db.commit()
+    return {"ok": True}
+
+@router.delete("/mine/all")
+def delete_all_scans(db: Session = Depends(get_db), user: User = Depends(current_user)):
+    if user.role not in ("farmer", "user"):
+        raise HTTPException(403, "Scan history is not available for this account.")
+    rows = db.scalars(select(PlantScan).where(PlantScan.user_id == user.id)).all()
+    count = len(rows)
+    for scan in rows:
+        db.delete(scan)
+    db.commit()
+    return {"ok": True, "deleted": count}
