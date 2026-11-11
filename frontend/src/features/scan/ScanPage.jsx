@@ -25,7 +25,7 @@ export default function ScanPage() {
       const imageEntries = await Promise.all(scans.map(async (scan) => {
         if (!scan.image_url) return [scan.id, '']
         try {
-          const blob = await apiBlob(scan.image_url.replace(/^\\/api/, ''))
+          const blob = await apiBlob(scan.image_url.replace(/^\/api/, ''))
           return [scan.id, URL.createObjectURL(blob)]
         } catch { return [scan.id, ''] }
       }))
@@ -78,7 +78,7 @@ export default function ScanPage() {
       const data = await scansApi.create(file, crop)
       setResult(data)
       if (data.image_url) {
-        const blob = await apiBlob(data.image_url.replace(/^\\/api/, ''))
+        const blob = await apiBlob(data.image_url.replace(/^\/api/, ''))
         if (previewUrl) URL.revokeObjectURL(previewUrl)
         setPreviewUrl(URL.createObjectURL(blob))
       }
