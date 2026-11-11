@@ -40,7 +40,7 @@ export default function MyListingsPage(){
   }catch(e){setError(e.message)}finally{setSaving(false)}
  }
  async function remove(id){try{await productsApi.remove(id);await load()}catch(e){setError(e.message)}}
- const imageSrc=(url)=>url?(`${API_BASE.replace(/\\/$/,'').replace(/\\/api$/,'')}${url}`):''
+ const imageSrc=(url)=>url?(`${API_BASE.replace(/\/$/,'').replace(/\/api$/,'')}${url}`):''
  return <div className="grid gap-6 xl:grid-cols-[.8fr_1.2fr]">
   <section className="h-fit rounded-2xl border border-stone-200/70 bg-white p-6 dark:border-white/10 dark:bg-[#17251b]">
    <div className="flex items-center gap-3"><span className="grid h-11 w-11 place-items-center rounded-xl bg-forest-50 text-forest-700 dark:bg-forest-900/50 dark:text-forest-100"><PackagePlus/></span><div><h1 className="font-display text-xl font-extrabold">Add a listing</h1><p className="text-sm text-stone-500">Publish products to the marketplace.</p></div></div>
