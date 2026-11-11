@@ -55,6 +55,7 @@ class ProductOut(BaseModel):
     seller_location: str | None = None
     average_rating: float = 0
     review_count: int = 0
+    image_url: str | None = None
 
 class CheckoutItem(BaseModel):
     product_id: int
