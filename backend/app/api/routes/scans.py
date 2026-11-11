@@ -37,6 +37,8 @@ def scan_out(s: PlantScan):
 
 @router.get("/{scan_id}/image")
 def scan_image(scan_id: int, db: Session = Depends(get_db), user: User = Depends(current_user)):
+    if user.role not in ('farmer', 'user'):
+        raise HTTPException(403, 'Plant scan access is for farmers and users only.')
     scan = db.get(PlantScan, scan_id)
     if not scan or scan.user_id != user.id or not scan.image_data:
         raise HTTPException(404, "Scan image not found.")
@@ -45,6 +47,8 @@ def scan_image(scan_id: int, db: Session = Depends(get_db), user: User = Depends
 
 @router.get("/mine")
 def my_scans(db: Session = Depends(get_db), user: User = Depends(current_user)):
+    if user.role not in ('farmer', 'user'):
+        raise HTTPException(403, 'Plant scan history is for farmers and users only.')
     scans = db.scalars(select(PlantScan).where(PlantScan.user_id == user.id).order_by(PlantScan.created_at.desc())).all()
     return [scan_out(s) for s in scans]
 
