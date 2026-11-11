@@ -7,6 +7,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from fastapi import APIRouter, HTTPException, Request as FastAPIRequest
+from app.core.config import settings
 from pydantic import BaseModel, Field
 
 router = APIRouter(prefix="/chat", tags=["TreeRasa Assistant"])
@@ -130,12 +131,12 @@ Keep the answer useful for small and medium Indian farms. Use metric units.
 @router.post("", response_model=ChatResponse)
 def chat(payload: ChatRequest, request: FastAPIRequest):
     _check_rate_limit(request.client.host if request.client else "unknown")
-    api_key = os.getenv("GEMINI_API_KEY", "").strip()
+    api_key = settings.gemini_api_key.strip()
     if not api_key:
         raise HTTPException(
             status_code=503,
             detail="TreeRasa Assistant is not configured yet. The site administrator needs to add GEMINI_API_KEY to the backend environment.",
         )
-    model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
+    model = settings.gemini_model.strip() or "gemini-2.5-flash"
     reply = _generate_reply(payload, api_key, model)
     return ChatResponse(reply=reply, language=payload.language)
