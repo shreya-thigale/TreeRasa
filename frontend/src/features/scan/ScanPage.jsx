@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import {
   ScanLine, UploadCloud, Leaf, Clock3, ImagePlus, CheckCircle2,
-  AlertTriangle, Activity, Sprout, RefreshCw
+  AlertTriangle, Activity, Sprout, RefreshCw, Trash2
 } from 'lucide-react'
 import { scansApi } from '../../api/scans.api'
 import { apiBlob } from '../../api/client'
@@ -93,6 +93,18 @@ export default function ScanPage() {
       if (previous) URL.revokeObjectURL(previous)
       return ''
     })
+  }
+
+  async function deleteOneScan(scanId) {
+    if (!window.confirm('Delete this scan and its saved image?')) return
+    try { await scansApi.remove(scanId); await loadHistory() }
+    catch (err) { setHistoryError(err.message || 'Could not delete this scan.') }
+  }
+
+  async function deleteAllScans() {
+    if (!window.confirm('Delete all your scan history and saved images? This cannot be undone.')) return
+    try { await scansApi.removeAll(); setHistory([]); setHistoryImages((previous) => { Object.values(previous).forEach((url) => { if (url) URL.revokeObjectURL(url) }); return {} }); setResult(null) }
+    catch (err) { setHistoryError(err.message || 'Could not delete scan history.') }
   }
 
   async function submit(event) {
@@ -267,21 +279,22 @@ export default function ScanPage() {
             <p className="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">Your activity</p>
             <h2 className="mt-1 font-display text-xl font-extrabold">Recent scan history</h2>
           </div>
-          <span className="text-xs text-stone-500">{history.length} saved {history.length === 1 ? 'scan' : 'scans'}</span>
+          <div className="flex items-center gap-3"><span className="text-xs text-stone-500">{history.length} saved {history.length === 1 ? 'scan' : 'scans'}</span>{history.length > 0 && <button type="button" onClick={deleteAllScans} className="inline-flex items-center gap-1.5 rounded-lg border border-rose-200 px-3 py-2 text-xs font-bold text-rose-700 hover:bg-rose-50 dark:border-rose-900 dark:text-rose-300"><Trash2 size={14}/> Delete all</button>}</div>
         </div>
 
         {historyError && <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{historyError}</p>}
         {history.length ? (
           <div className="grid gap-3 md:grid-cols-2">
             {history.map((scan) => (
-              <article key={scan.id} className="flex min-w-0 items-center gap-4 rounded-2xl border border-stone-200/70 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-[#17251b]">
+              <article key={scan.id} className="flex min-w-0 flex-wrap items-center gap-4 rounded-2xl border border-stone-200/70 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-[#17251b]">
                 {historyImages[scan.id] ? <img src={historyImages[scan.id]} alt={scan.crop_name || 'Scanned plant'} className="h-20 w-20 shrink-0 rounded-xl bg-stone-100 object-cover" /> : <span className="grid h-20 w-20 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200"><Clock3 size={24} /></span>}
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-bold">{scan.predicted_disease}</p>
                   <p className="mt-1 text-xs capitalize text-stone-500">{scan.crop_name || 'Crop not specified'}</p>
                   <p className="mt-1 text-xs text-stone-400">{new Date(scan.created_at).toLocaleString()}</p>
                 </div>
-                <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold capitalize ${scan.status === 'success' ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200' : 'bg-amber-50 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200'}`}>{formatStatus(scan.status)}</span>
+                <div className="flex shrink-0 flex-col items-end gap-2"><span className={`rounded-full px-2.5 py-1 text-[10px] font-bold capitalize ${scan.status === 'success' ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200' : 'bg-amber-50 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200'}`}>{formatStatus(scan.status)}</span><button type="button" onClick={() => deleteOneScan(scan.id)} aria-label="Delete scan" className="rounded-lg p-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30"><Trash2 size={15}/></button></div>
+                <details className="basis-full border-t border-stone-100 pt-2 text-sm dark:border-white/10"><summary className="cursor-pointer font-semibold text-emerald-800 dark:text-emerald-200">View diagnosis & recommendations</summary><div className="mt-3 space-y-2 text-stone-600 dark:text-stone-300"><p><b>Diagnosis:</b> {scan.predicted_disease}</p><p><b>Confidence:</b> {scan.confidence == null ? 'Not available' : `${(scan.confidence * 100).toFixed(1)}%`}</p><p className="whitespace-pre-line"><b>Recommendations:</b> {scan.recommendations || 'No recommendations were saved for this scan.'}</p><p className="text-xs text-stone-400">AI-assisted result; confirm with an agricultural expert before treatment.</p></div></details>
               </article>
             ))}
           </div>
