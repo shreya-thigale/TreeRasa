@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.db.init_db import init_db
-from app.api.routes import auth, profile, products, orders, scans, dashboard
+from app.api.routes import auth, profile, products, orders, scans, dashboard, notifications
 
 app = FastAPI(title="TreeRasa API", version="1.0.0", description="Agricultural marketplace and plant health platform")
 app.add_middleware(CORSMiddleware, allow_origins=settings.allowed_origins, allow_credentials=True,
@@ -16,5 +16,5 @@ def startup():
 def health():
     return {"status": "ok", "service": "treerasa-api"}
 
-for router in (auth.router, profile.router, products.router, orders.router, scans.router, dashboard.router):
+for router in (auth.router, profile.router, products.router, orders.router, scans.router, dashboard.router, notifications.router):
     app.include_router(router, prefix="/api")
