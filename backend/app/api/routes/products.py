@@ -27,13 +27,36 @@ def validate_listing_type(listing_type: str, user: User):
         raise HTTPException(403, "Only vendors can list agricultural supplies.")
 
 @router.get("", response_model=list[ProductOut])
-def list_products(listing_type: str | None = Query(default=None), category: str | None = None,
-                  search: str | None = None, db: Session = Depends(get_db)):
+def list_products(
+    listing_type: str | None = Query(default=None),
+    category: str | None = None,
+    search: str | None = None,
+    sort_by: str = Query(default="newest"),
+    min_price: float | None = None,
+    max_price: float | None = None,
+    db: Session = Depends(get_db)
+):
     stmt = select(Product).where(Product.is_active.is_(True), Product.stock > 0)
     if listing_type in ("produce", "supply"): stmt = stmt.where(Product.listing_type == listing_type)
     if category: stmt = stmt.where(Product.category.ilike(f"%{category}%"))
     if search: stmt = stmt.where(Product.title.ilike(f"%{search}%"))
-    products = db.scalars(stmt.order_by(Product.created_at.desc())).all()
+    if min_price is not None:
+     stmt = stmt.where(Product.price >= min_price)
+    if max_price is not None:
+     stmt = stmt.where(Product.price <= max_price)
+    if sort_by == "price_low":
+     stmt = stmt.order_by(Product.price.asc())
+
+    elif sort_by == "price_high":
+     stmt = stmt.order_by(Product.price.desc())
+
+    elif sort_by == "newest":
+     stmt = stmt.order_by(Product.created_at.desc())
+
+    else:
+     stmt = stmt.order_by(Product.created_at.desc())
+
+    products = db.scalars(stmt).all()
     return [serialize_product(p, db) for p in products]
 
 @router.post("", response_model=ProductOut)
