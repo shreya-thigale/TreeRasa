@@ -5,6 +5,7 @@ from app.db.session import get_db
 from app.api.deps import current_user
 from app.models.user import User
 from app.models.scan import PlantScan
+from app.models.notification import Notification
 from app.services.inference import predict_plant
 from app.core.config import settings
 
@@ -26,7 +27,10 @@ async def create_scan(file: UploadFile = File(...), crop_name: str | None = None
         predicted_disease=result.get("predicted_disease", "Not analyzed"), confidence=result.get("confidence"),
         recommendations=result.get("recommendations", ""), status=result.get("status", "model_not_configured"),
         image_data=image, image_mime=file.content_type)
-    db.add(scan); db.commit(); db.refresh(scan)
+    db.add(scan)
+    db.flush()
+    db.add(Notification(user_id=user.id, title='Plant scan completed', message=f'Your {scan.crop_name or "plant"} scan result: {scan.predicted_disease}. Open Plant health scan to review recommendations.', kind='scan'))
+    db.commit(); db.refresh(scan)
     return scan_out(scan)
 
 def scan_out(s: PlantScan):
