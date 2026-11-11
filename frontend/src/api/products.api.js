@@ -2,6 +2,7 @@ import { api, json } from './client'
 export const productsApi = {
   list: (params = {}) => api(`/products?${new URLSearchParams(Object.entries(params).filter(([,v])=>v))}`),
   mine: () => api('/products/mine'),
+  reviews: (id) => api(`/orders/reviews/product/${id}`),
   create: (payload) => api('/products', json('POST', payload)),
   createWithImage: (payload, image) => {
     const form = new FormData()
