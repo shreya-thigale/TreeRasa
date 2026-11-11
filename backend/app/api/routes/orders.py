@@ -80,6 +80,25 @@ def update_status(order_id: int, payload: OrderStatusIn, db: Session = Depends(g
     db.commit()
     return {"ok": True, "status": order.status}
 
+@router.get("/reviews/product/{product_id}")
+def product_reviews(product_id: int, db: Session = Depends(get_db)):
+    product = db.get(Product, product_id)
+    if not product:
+        raise HTTPException(404, "Product not found.")
+    rows = db.execute(
+        select(Review, User.full_name)
+        .join(User, User.id == Review.user_id)
+        .where(Review.product_id == product_id)
+        .order_by(Review.created_at.desc())
+    ).all()
+    return [{
+        "id": review.id,
+        "rating": review.rating,
+        "comment": review.comment,
+        "reviewer_name": reviewer_name,
+        "created_at": review.created_at.isoformat()
+    } for review, reviewer_name in rows]
+
 @router.post("/reviews")
 def create_review(payload: ReviewIn, db: Session = Depends(get_db), user: User = Depends(current_user)):
     item = db.get(OrderItem, payload.order_item_id)
@@ -90,5 +109,7 @@ def create_review(payload: ReviewIn, db: Session = Depends(get_db), user: User =
     if db.scalar(select(Review).where(Review.order_item_id == item.id)) or db.scalar(select(Review).where(Review.user_id == user.id, Review.product_id == item.product_id)):
         raise HTTPException(409, "You have already reviewed this product.")
     review = Review(user_id=user.id, product_id=item.product_id, order_item_id=item.id, rating=payload.rating, comment=payload.comment)
-    db.add(review); db.commit()
+    db.add(review)
+    db.add(Notification(user_id=order.seller_id, title='New product review', message=f'{user.full_name} rated {item.product_title} {payload.rating}/5.', kind='review'))
+    db.commit()
     return {"ok": True, "message": "Review saved."}
