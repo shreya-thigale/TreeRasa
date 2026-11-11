@@ -13,7 +13,7 @@ from app.models.notification import Notification
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
-def order_out(o: Order, viewer_id: int):
+def order_out(o: Order, viewer_id: int, reviewed_item_ids: set[int] | None = None):
     buyer = o.buyer
     seller = o.seller
     return {"id": o.id, "order_number": o.order_number, "buyer_id": o.buyer_id, "seller_id": o.seller_id,
@@ -23,7 +23,7 @@ def order_out(o: Order, viewer_id: int):
             "seller": {"id": seller.id, "full_name": seller.full_name, "role": seller.role,
             "email": seller.email, "phone": seller.phone, "location": seller.location} if o.buyer_id == viewer_id else None,
             "items": [{"id": i.id, "product_id": i.product_id, "product_title": i.product_title,
-                       "quantity": i.quantity, "unit_price": i.unit_price} for i in o.items]}
+                       "quantity": i.quantity, "unit_price": i.unit_price, "reviewed": i.id in (reviewed_item_ids or set())} for i in o.items]}
 
 @router.post("/checkout")
 def checkout(payload: CheckoutIn, db: Session = Depends(get_db), user: User = Depends(current_user)):
@@ -61,7 +61,8 @@ def my_orders(db: Session = Depends(get_db), user: User = Depends(current_user))
     orders = db.scalars(select(Order).options(joinedload(Order.items), joinedload(Order.buyer), joinedload(Order.seller))
                         .where((Order.buyer_id == user.id) | (Order.seller_id == user.id))
                         .order_by(Order.created_at.desc())).unique().all()
-    return [order_out(o, user.id) for o in orders]
+    reviewed_item_ids = set(db.scalars(select(Review.order_item_id).where(Review.user_id == user.id)).all())
+    return [order_out(o, user.id, reviewed_item_ids) for o in orders]
 
 @router.patch("/{order_id}/status")
 def update_status(order_id: int, payload: OrderStatusIn, db: Session = Depends(get_db), user: User = Depends(current_user)):
