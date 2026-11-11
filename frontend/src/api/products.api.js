@@ -3,5 +3,11 @@ export const productsApi = {
   list: (params = {}) => api(`/products?${new URLSearchParams(Object.entries(params).filter(([,v])=>v))}`),
   mine: () => api('/products/mine'),
   create: (payload) => api('/products', json('POST', payload)),
+  createWithImage: (payload, image) => {
+    const form = new FormData()
+    Object.entries(payload).forEach(([key, value]) => form.append(key, String(value)))
+    if (image) form.append('image', image)
+    return api('/products/with-image', { method: 'POST', body: form })
+  },
   remove: (id) => api(`/products/${id}`, { method:'DELETE' }),
 }
