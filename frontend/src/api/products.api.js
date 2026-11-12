@@ -21,6 +21,7 @@ export const productsApi = {
     if (image) form.append('image', image)
     return api('/products/with-image', { method: 'POST', body: form })
   },
+  updateStock: (id, stock) => api(`/products/${id}/stock`, json('PATCH', { stock })),
   remove: (id) => api(`/products/${id}`, { method: 'DELETE' }),
 }
 
