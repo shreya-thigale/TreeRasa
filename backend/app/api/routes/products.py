@@ -102,22 +102,25 @@ def my_products(db: Session = Depends(get_db), user: User = Depends(current_user
     products = db.scalars(select(Product).where(Product.seller_id == user.id, Product.is_active.is_(True)).order_by(Product.created_at.desc())).all()
     return [serialize_product(p, db) for p in products]
 
-@router.patch("/{product_id}/stock")
+@router.api_route("/{product_id}/stock", methods=["PATCH", "PUT"])
 def update_product_stock(product_id: int, payload: StockUpdateIn, db: Session = Depends(get_db), user: User = Depends(current_user)):
-    p = db.get(Product, product_id)
-    if not p or not p.is_active:
-        raise HTTPException(404, "Listing not found.")
-    if p.seller_id != user.id:
-        raise HTTPException(403, "You can only update stock for your own listing.")
+    p = db.scalar(select(Product).where(Product.id == product_id, Product.seller_id == user.id, Product.is_active.is_(True)))
+    if not p:
+        raise HTTPException(404, "Active listing not found. Refresh your listings and try again.")
     p.stock = payload.stock
     db.commit()
     db.refresh(p)
     return {"ok": True, "product_id": p.id, "stock": p.stock}
 
+
 @router.delete("/{product_id}")
 def delete_product(product_id: int, db: Session = Depends(get_db), user: User = Depends(current_user)):
-    p = db.get(Product, product_id)
-    if not p: raise HTTPException(404, "Product not found.")
-    if p.seller_id != user.id: raise HTTPException(403, "You can only remove your own listing.")
-    p.is_active = False; db.commit()
-    return {"ok": True}
+    p = db.scalar(select(Product).where(Product.id == product_id, Product.seller_id == user.id))
+    if not p:
+        raise HTTPException(404, "Listing not found or you do not own it.")
+    if p.is_active:
+        p.is_active = False
+        db.commit()
+        db.refresh(p)
+    # Return the persisted state so the client can confirm the database update.
+    return {"ok": True, "product_id": p.id, "is_active": p.is_active}
