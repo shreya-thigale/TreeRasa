@@ -30,12 +30,12 @@ export default function ChatbotWidget() {
     setError('')
     setLoading(true)
     try {
-      const data = await api('/chat', json('POST', {
+      const data = await api('/chatbot', json('POST', {
         message,
         language,
         history: previous.slice(-8).map(({ role, content }) => ({ role, content })),
       }))
-      setMessages(current => [...current, { role: 'assistant', content: data.reply }])
+      setMessages(current => [...current, { role: 'assistant', content: data.response }])
     } catch (err) {
       setError(err.message || t('chatError'))
     } finally {
