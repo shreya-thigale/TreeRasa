@@ -6,7 +6,7 @@ import { useLanguage } from '../../context/LanguageContext'
 const common=[
  {to:'/dashboard',label:'Overview',icon:LayoutDashboard},
  {to:'/scan',label:'Plant health scan',icon:ScanLine},
- {to:'/chatbot',label:'PlantCare AI',icon:Bot},
+ {to:'/chatbot',label:t('plantCareAI'),icon:Bot},
  {to:'/marketplace/produce',label:'Fresh from farms',icon:Leaf},
  {to:'/marketplace/supplies',label:'Seeds & fertilizers',icon:ShoppingBasket},
  {to:'/orders',label:'Orders',icon:ClipboardList},
