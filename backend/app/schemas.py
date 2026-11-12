@@ -40,6 +40,9 @@ class ProductIn(BaseModel):
     unit: str = "kg"
     stock: int = Field(ge=0)
 
+class StockUpdateIn(BaseModel):
+    stock: int = Field(ge=0, le=10000000)
+
 class ProductOut(BaseModel):
     id: int
     seller_id: int
