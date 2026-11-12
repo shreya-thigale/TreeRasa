@@ -1,11 +1,10 @@
-import { api } from './client'
+import { api, json } from './client'
 
 export const chatbotApi = {
-  chat: (message) =>
-    api('/chatbot', {
-      method: 'POST',
-      body: JSON.stringify({
-        message
-      }),
-    }),
+  chat: (message, language = 'en', history = []) =>
+    api('/chatbot', json('POST', {
+      message,
+      language,
+      history: history.slice(-8),
+    })),
 }
