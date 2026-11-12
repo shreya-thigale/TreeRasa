@@ -38,6 +38,9 @@ def ask_plantcare_ai(user_input: str, language: str = "en", history: list | None
     if not question:
         return "Please enter a question about plants or agriculture."
 
+    normalized = ' '.join(question.casefold().strip(' .,!?।').split())
+    if normalized in {'hi', 'hii', 'hiii', 'hello', 'hey', 'namaste', 'नमस्ते', 'नमस्कार'}:
+        return {'hi': 'नमस्ते! 🌱 मैं PlantCare AI हूँ। फसल, मिट्टी और पौधों की सेहत के बारे में पूछें।', 'mr': 'नमस्कार! 🌱 मी PlantCare AI आहे. पिके, माती आणि वनस्पतींच्या आरोग्याबद्दल विचारा.'}.get(language, 'Namaste! 🌱 I am PlantCare AI. Ask me about crops, soil or plant health.')
     # Keep the quick, curated responses from Siddhi's original chatbot.
     hardcoded = {
         "hi": "Hello! 🌱 I am PlantCare AI. How can I help you with your plants today?",
