@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.db.init_db import init_db
-from app.api.routes import auth, profile, products, orders, scans, dashboard, notifications, chat, chatbot
+from app.api.routes import auth, profile, products, orders, scans, dashboard, notifications, chatbot
 
 
 app = FastAPI(title="TreeRasa API", version="1.0.0", description="Agricultural marketplace and plant health platform")
