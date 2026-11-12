@@ -41,6 +41,45 @@ def ask_plantcare_ai(user_input: str, language: str = "en", history: list | None
     normalized = ' '.join(question.casefold().strip(' .,!?।').split())
     if normalized in {'hi', 'hii', 'hiii', 'hello', 'hey', 'namaste', 'नमस्ते', 'नमस्कार'}:
         return {'hi': 'नमस्ते! 🌱 मैं PlantCare AI हूँ। फसल, मिट्टी और पौधों की सेहत के बारे में पूछें।', 'mr': 'नमस्कार! 🌱 मी PlantCare AI आहे. पिके, माती आणि वनस्पतींच्या आरोग्याबद्दल विचारा.'}.get(language, 'Namaste! 🌱 I am PlantCare AI. Ask me about crops, soil or plant health.')
+    # Curated answers for common farmer questions. These work without Gemini.
+    curated = {
+        "soil": {
+            "en": "To improve soil health: (1) add well-decomposed compost or farmyard manure, (2) grow legumes or use suitable cover crops in rotation, (3) keep soil covered with mulch or crop residue, (4) avoid working soil when it is too wet, and (5) base fertilizer use on a soil test. What crop and soil type do you have?",
+            "hi": "मिट्टी की सेहत सुधारने के लिए: (1) अच्छी तरह सड़ी हुई कम्पोस्ट या गोबर की खाद डालें, (2) फसल चक्र में दलहनी फसलें शामिल करें, (3) मल्च या फसल अवशेष से मिट्टी ढकें, (4) बहुत गीली मिट्टी में जुताई न करें और (5) मिट्टी की जाँच के आधार पर खाद डालें। आपकी फसल और मिट्टी का प्रकार क्या है?",
+            "mr": "मातीची सुपीकता सुधारण्यासाठी: (1) पूर्ण कुजलेले कंपोस्ट किंवा शेणखत वापरा, (2) पीक फेरपालटीत कडधान्य पिकांचा समावेश करा, (3) आच्छादन किंवा पिकांचे अवशेष वापरून माती झाका, (4) अत ओली माती नांगरू नका आणि (5) माती परीक्षणानुसार खत द्या. तुमचे पीक आणि मातीचा प्रकार कोणता आहे?"
+        },
+        "yellow": {
+            "en": "Yellow leaves can be caused by overwatering, poor drainage, nutrient deficiency, pests or disease. Check soil moisture and the underside of leaves. Tell me the crop, whether older or newer leaves are yellow, and how long this has been happening.",
+            "hi": "पत्तों का पीला होना अधिक पानी, खराब जल निकास, पोषक तत्वों की कमी, कीट या रोग के कारण हो सकता है। मिट्टी की नमी और पत्तों के नीचे की जाँच करें। फसल का नाम बताएं और यह भी कि पुराने पत्ते पीले हैं या नए।",
+            "mr": "पाने पिवळी होण्यामागे जास्त पाणी, खराब निचरा, अन्नद्रव्यांची कमतरता, कीड किंवा रोग कारणीभूत असू शकतात. मातीतील ओलावा आणि पानांची खालची बाजू तपासा. कोणते पीक आहे आणि जुनी की नवी पाने पिवळी होत आहेत ते सांगा."
+        },
+        "watering": {
+            "en": "Water based on soil moisture rather than a fixed schedule. Check the root zone, water slowly near the soil, and avoid waterlogging. Hot weather, soil type and plant stage all affect water needs.",
+            "hi": "पानी देने का समय तय कैलेंडर के बजाय मिट्टी की नमी देखकर तय करें। जड़ों के पास की मिट्टी जाँचें, धीरे-धीरे पौधे के आधार पर पानी दें और जलभराव से बचें। गर्मी, मिट्टी और फसल की अवस्था के अनुसार पानी की ज़रूरत बदलती है।",
+            "mr": "ठराविक वेळापत्रकाऐवजी मातीतील ओलावा पाहून पाणी द्या. मुळांजवळील माती तपासा, झाडाच्या बुंध्याजवळ हळूहळू पाणी द्या आणि पाणी साचू देऊ नका. उष्णता, मातीचा प्रकार आणि पिकाची अवस्था यानुसार पाण्याची गरज बदलते."
+        },
+        "compost": {
+            "en": "Use mature, well-decomposed compost. Mix it into the soil before planting or apply a modest layer around established plants without piling it against stems. Compost improves soil structure but may not supply every nutrient a crop needs.",
+            "hi": "अच्छी तरह तैयार और पूरी तरह सड़ी हुई कम्पोस्ट इस्तेमाल करें। बुवाई से पहले मिट्टी में मिलाएँ या बड़े पौधों के आसपास थोड़ी परत डालें; तने से सटाकर ढेर न लगाएँ। कम्पोस्ट मिट्टी की संरचना सुधारती है, लेकिन हर पोषक तत्व की पूरी ज़रूरत नहीं पूरी करती।",
+            "mr": "पूर्ण कुजलेले कंपोस्ट वापरा. लागवडीपूर्वी ते मातीत मिसळा किंवा वाढलेल्या झाडाभोवती थर द्या; खोडाला लागून ढीग करू नका. कंपोस्टमुळे मातीची रचना सुधारते, पण पिकांना लागणारी सर्व अन्नद्रव्ये त्यातून मिळतीलच असे नाही."
+        },
+        "tomato": {
+            "en": "For tomato plants, keep soil evenly moist but not waterlogged. Water at the base in the morning when practical, use mulch to reduce evaporation, and provide support as plants grow. Avoid frequent wetting of foliage.",
+            "hi": "टमाटर के पौधों की मिट्टी में समान नमी रखें, लेकिन पानी जमा न होने दें। संभव हो तो सुबह जड़ों के पास पानी दें, नमी बनाए रखने के लिए मल्च इस्तेमाल करें और पौधों को सहारा दें। पत्तों को बार-बार गीला करने से बचें।",
+            "mr": "टोमॅटोच्या झाडांच्या मातीत समान ओलावा ठेवा, पण पाणी साचू देऊ नका. शक्य असल्यास सकाळी बुंध्याजवळ पाणी द्या, ओलावा टिकवण्यासाठी आच्छादन वापरा आणि झाडांना आधार द्या. पानांवर वारंवार पाणी पडू देऊ नका."
+        }
+    }
+    faq_phrases = {
+        "soil": ["how can i improve soil health", "how to improve soil health", "soil health", "मिट्टी की सेहत कैसे सुधारें", "मिट्टी की उर्वरता कैसे बढ़ाएं", "मातीची सुपीकता कशी वाढवू", "मातीची सुपीकता कशी वाढवावी"],
+        "yellow": ["why are my plant leaves turning yellow", "why are leaves yellow", "leaves turning yellow", "पत्ते पीले क्यों हो रहे हैं", "पौधों के पत्ते पीले क्यों होते हैं", "पाने पिवळी का पडतात", "झाडांची पाने पिवळी का होतात"],
+        "watering": ["how often should i water plants", "how much should i water plants", "when should i water plants", "पौधों को कितनी बार पानी दें", "पौधों में पानी कब डालें", "झाडांना किती वेळा पाणी द्यावे", "पिकांना पाणी कधी द्यावे"],
+        "compost": ["how to use compost", "is compost good for plants", "कम्पोस्ट का उपयोग कैसे करें", "खाद का उपयोग कैसे करें", "कंपोस्ट कसे वापरावे", "कंपोस्ट झाडांसाठी कसे वापरावे"],
+        "tomato": ["how to care for tomato plants", "tomato plant care", "टमाटर के पौधे की देखभाल कैसे करें", "टोमॅटोच्या झाडांची काळजी कशी घ्यावी"]
+    }
+    for topic, phrases in faq_phrases.items():
+        if any(phrase in normalized for phrase in phrases):
+            return curated[topic].get(language, curated[topic]["en"])
+
     # Keep the quick, curated responses from Siddhi's original chatbot.
     hardcoded = {
         "hi": "Hello! 🌱 I am PlantCare AI. How can I help you with your plants today?",
