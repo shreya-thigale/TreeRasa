@@ -24,6 +24,10 @@ function formatStatus(status) {
 export default function ScanPage() {
   const {t}=useLanguage()
   const cameraInputRef = useRef(null)
+  const videoRef = useRef(null)
+  const streamRef = useRef(null)
+  const [cameraOpen, setCameraOpen] = useState(false)
+  const [cameraError, setCameraError] = useState('')
   const [file, setFile] = useState(null)
   const [crop, setCrop] = useState('')
   const [result, setResult] = useState(null)
@@ -61,10 +65,76 @@ export default function ScanPage() {
   useEffect(() => {
     loadHistory()
     return () => {
+      streamRef.current?.getTracks().forEach((track) => track.stop())
       if (previewUrl) URL.revokeObjectURL(previewUrl)
       Object.values(historyImages).forEach((url) => { if (url) URL.revokeObjectURL(url) })
     }
   }, [])
+
+  function stopCamera() {
+    streamRef.current?.getTracks().forEach((track) => track.stop())
+    streamRef.current = null
+    if (videoRef.current) videoRef.current.srcObject = null
+    setCameraOpen(false)
+  }
+
+  async function startCamera() {
+    setCameraError('')
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCameraError('Camera access is unavailable in this browser. Use HTTPS or choose a photo instead.')
+      return
+    }
+    try {
+      stopCamera()
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+      })
+      streamRef.current = stream
+      setCameraOpen(true)
+      requestAnimationFrame(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream
+          videoRef.current.play().catch(() => setCameraError('Could not start the camera preview. Please allow camera access and try again.'))
+        }
+      })
+    } catch (err) {
+      const message = err?.name === 'NotAllowedError'
+        ? 'Camera permission was denied. Allow camera access in your browser settings, then try again.'
+        : err?.name === 'NotFoundError'
+          ? 'No camera was found on this device. You can choose an image instead.'
+          : 'Unable to open the camera. Check that another app is not using it, then try again.'
+      setCameraError(message)
+      setCameraOpen(false)
+    }
+  }
+
+  function captureCameraPhoto() {
+    const video = videoRef.current
+    if (!video || !video.videoWidth || !video.videoHeight) {
+      setCameraError('The camera is not ready yet. Please wait a moment and try again.')
+      return
+    }
+    const canvas = document.createElement('canvas')
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    canvas.getContext('2d')?.drawImage(video, 0, 0, canvas.width, canvas.height)
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        setCameraError('Could not capture the photo. Please try again.')
+        return
+      }
+      const captured = new File([blob], `treerasa-plant-${Date.now()}.jpg`, { type: 'image/jpeg' })
+      setError('')
+      setResult(null)
+      setFile(captured)
+      setPreviewUrl((previous) => {
+        if (previous) URL.revokeObjectURL(previous)
+        return URL.createObjectURL(captured)
+      })
+      stopCamera()
+    }, 'image/jpeg', 0.9)
+  }
 
   function selectFile(event) {
     const selected = event.target.files?.[0] || null
@@ -204,9 +274,22 @@ export default function ScanPage() {
             <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={selectFile} />
           </label>
           <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={selectFile} />
-          <button type="button" onClick={() => cameraInputRef.current?.click()} className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-700/30 bg-white px-4 py-3 text-sm font-bold text-emerald-900 transition hover:bg-emerald-50 dark:border-emerald-700 dark:bg-white/5 dark:text-emerald-100 dark:hover:bg-emerald-950/30">
-            <Camera size={18}/> {t('takePhoto')}
-          </button>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button type="button" onClick={cameraOpen ? stopCamera : startCamera} className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-emerald-700/30 bg-white px-4 py-3 text-sm font-bold text-emerald-900 transition hover:bg-emerald-50 dark:border-emerald-700 dark:bg-white/5 dark:text-emerald-100 dark:hover:bg-emerald-950/30">
+              <Camera size={18}/> {cameraOpen ? 'Close camera' : 'Open live camera'}
+            </button>
+            <button type="button" onClick={() => cameraInputRef.current?.click()} className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-stone-100 dark:border-white/10 dark:bg-white/5 dark:text-stone-200">
+              <UploadCloud size={17}/> Choose from device
+            </button>
+          </div>
+          {cameraOpen && <div className="mt-3 overflow-hidden rounded-2xl border border-emerald-200 bg-black dark:border-emerald-900">
+            <video ref={videoRef} autoPlay playsInline muted className="max-h-72 min-h-48 w-full object-contain" />
+            <div className="flex items-center justify-between gap-3 bg-stone-950 px-3 py-3 text-white">
+              <span className="text-xs text-stone-300">Live camera preview</span>
+              <button type="button" onClick={captureCameraPhoto} className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-500">Capture photo</button>
+            </div>
+          </div>}
+          {cameraError && <p role="alert" className="mt-3 rounded-xl bg-amber-50 p-3 text-xs leading-5 text-amber-900 dark:bg-amber-950/30 dark:text-amber-100">{cameraError}</p>}
 
           {error && <p role="alert" className="mt-4 rounded-xl bg-rose-50 p-3 text-sm text-rose-700 dark:bg-rose-950/30 dark:text-rose-200">{error}</p>}
 
