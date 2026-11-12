@@ -6,7 +6,7 @@ import { useLanguage } from '../../context/LanguageContext'
 const common=[
  {to:'/dashboard',label:'Overview',icon:LayoutDashboard},
  {to:'/scan',label:'Plant health scan',icon:ScanLine},
- {to:'/chatbot',label:t('plantCareAI'),icon:Bot},
+ {to:'/chatbot',label:'PlantCare AI',icon:Bot},
  {to:'/marketplace/produce',label:'Fresh from farms',icon:Leaf},
  {to:'/marketplace/supplies',label:'Seeds & fertilizers',icon:ShoppingBasket},
  {to:'/orders',label:'Orders',icon:ClipboardList},
@@ -18,7 +18,7 @@ export default function Sidebar(){
  const common=[
   {to:'/dashboard',label:t('overview'),icon:LayoutDashboard},
   ...(user?.role==='farmer'||user?.role==='user'?[{to:'/scan',label:t('scan'),icon:ScanLine}]:[]),
-  {to:'/chatbot',label:'PlantCare AI',icon:Bot},
+  {to:'/chatbot',label:t('plantCareAI'),icon:Bot},
   {to:'/marketplace/produce',label:t('produce'),icon:Leaf},
   {to:'/marketplace/supplies',label:t('supplies'),icon:ShoppingBasket},
   {to:'/orders',label:t('orders'),icon:ClipboardList},
