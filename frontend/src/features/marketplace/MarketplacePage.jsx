@@ -23,8 +23,6 @@ const [sortOrder,setSortOrder]=useState('newest');
 const [categoryFilter,setCategoryFilter]=useState('all');
 
 const [category,setCategory]=useState('');
-const [minPrice,setMinPrice]=useState('');
-const [maxPrice,setMaxPrice]=useState('');
 
 const [busy,setBusy]=useState(false);
 const [error,setError]=useState('');
@@ -43,8 +41,6 @@ async function load(){
     search,
     category,
     sort_by: sortOrder,
-    min_price: minPrice,
-    max_price: maxPrice
   });
 
   setProducts(data);
@@ -59,9 +55,7 @@ useEffect(()=>{
 },[
  listingType,
  sortOrder,
- category,
- minPrice,
- maxPrice
+ category
 ]);
 
 const filtered = useMemo(()=>{
@@ -109,7 +103,7 @@ TreeRasa marketplace
 </div>
 
 
-<div className="grid gap-3 lg:grid-cols-[1fr_auto_auto_auto_auto_auto]">
+<div className="grid gap-3 lg:grid-cols-[minmax(220px,1fr)_auto_auto]">
 
 <div className="relative">
 <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400"/>
@@ -170,30 +164,6 @@ className="min-w-36 bg-transparent py-3 text-sm outline-none"
 </label>
 
 
-<input
-type="number"
-placeholder="Min ₹"
-value={minPrice}
-onChange={e=>setMinPrice(e.target.value)}
-className="rounded-xl border px-4 py-3 w-28"
-/>
-
-
-<input
-type="number"
-placeholder="Max ₹"
-value={maxPrice}
-onChange={e=>setMaxPrice(e.target.value)}
-className="rounded-xl border px-4 py-3 w-28"
-/>
-
-
-<button
-onClick={load}
-className="rounded-xl bg-forest-700 px-5 py-3 font-bold text-white"
->
-Apply
-</button>
 
 
 <button
