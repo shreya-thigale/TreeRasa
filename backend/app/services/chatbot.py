@@ -33,7 +33,7 @@ def get_disease_info(user_input: str):
     return None, None
 
 
-def ask_plantcare_ai(user_input: str) -> str:
+def ask_plantcare_ai(user_input: str, language: str = "en", history: list | None = None) -> str:
     question = user_input.strip()
     if not question:
         return "Please enter a question about plants or agriculture."
@@ -88,9 +88,16 @@ Fertilizer: {disease_info.get('fertilizer', 'Not specified')}
 Prevention: {', '.join(disease_info.get('prevention', []))}
 """
 
+    language_name = {"en": "English", "hi": "Hindi (हिन्दी)", "mr": "Marathi (मराठी)"}.get(language, "English")
+    history_text = "\\n".join(
+        "{}: {}".format("User" if item.get("role") == "user" else "PlantCare AI", str(item.get("content", ""))[:1800])
+        for item in (history or [])[-8:]
+    )
     prompt = f"""
 You are PlantCare AI, the agriculture and plant-care assistant inside TreeRasa.
-Answer in clear, simple language for farmers and home gardeners in India.
+Always answer in {language_name}, using clear, simple language for farmers and home gardeners in India.
+Use this recent conversation as context when relevant:
+{history_text}
 Focus on crop cultivation, soil, irrigation, plant diseases, pests, fertilizers,
 gardening, and how to use TreeRasa. Politely redirect unrelated questions.
 Do not invent live weather, market prices, pesticide approvals, or user account data.
