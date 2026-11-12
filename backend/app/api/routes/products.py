@@ -6,7 +6,7 @@ from app.api.deps import current_user
 from app.models.user import User
 from app.models.product import Product
 from app.models.review import Review
-from app.schemas import ProductIn, ProductOut
+from app.schemas import ProductIn, ProductOut, StockUpdateIn
 from app.core.config import settings
 
 router = APIRouter(prefix="/products", tags=["Marketplace"])
@@ -99,8 +99,20 @@ def product_image(product_id: int, db: Session = Depends(get_db)):
 
 @router.get("/mine", response_model=list[ProductOut])
 def my_products(db: Session = Depends(get_db), user: User = Depends(current_user)):
-    products = db.scalars(select(Product).where(Product.seller_id == user.id).order_by(Product.created_at.desc())).all()
+    products = db.scalars(select(Product).where(Product.seller_id == user.id, Product.is_active.is_(True)).order_by(Product.created_at.desc())).all()
     return [serialize_product(p, db) for p in products]
+
+@router.patch("/{product_id}/stock")
+def update_product_stock(product_id: int, payload: StockUpdateIn, db: Session = Depends(get_db), user: User = Depends(current_user)):
+    p = db.get(Product, product_id)
+    if not p or not p.is_active:
+        raise HTTPException(404, "Listing not found.")
+    if p.seller_id != user.id:
+        raise HTTPException(403, "You can only update stock for your own listing.")
+    p.stock = payload.stock
+    db.commit()
+    db.refresh(p)
+    return {"ok": True, "product_id": p.id, "stock": p.stock}
 
 @router.delete("/{product_id}")
 def delete_product(product_id: int, db: Session = Depends(get_db), user: User = Depends(current_user)):
