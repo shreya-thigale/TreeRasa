@@ -8,7 +8,6 @@ import OrdersPage from '../features/orders/OrdersPage'
 import ScanPage from '../features/scan/ScanPage'
 import ProfilePage from '../features/profile/ProfilePage'
 import AuthPage from '../pages/AuthPage'
-import ChatbotWidget from '../components/common/ChatbotWidget'
 import ChatbotPage from '../features/chatbot/ChatbotPage'
 
 
@@ -28,5 +27,5 @@ export default function App(){
    <Route path="/chatbot" element={<ChatbotPage/>}/>
   </Route>
   <Route path="/" element={<Navigate to="/dashboard" replace/>}/><Route path="*" element={<Navigate to="/dashboard" replace/>}/>
- </Routes><ChatbotWidget/></>
+ </Routes></>
 }
