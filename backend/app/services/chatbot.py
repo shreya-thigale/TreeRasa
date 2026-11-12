@@ -33,12 +33,67 @@ def get_disease_info(user_input: str):
     return None, None
 
 
+def _is_treerasa_or_agriculture_question(question: str, history: list | None = None) -> bool:
+    """Allow only TreeRasa product help and plant/agriculture topics."""
+    text = question.casefold()
+    agriculture_terms = (
+        "plant", "crop", "farm", "farming", "agriculture", "agricultural",
+        "soil", "seed", "fertilizer", "fertiliser", "compost", "manure",
+        "irrigat", "water", "watering", "pest", "insect", "disease",
+        "leaf", "leaves", "yellow", "tomato", "onion", "wheat", "rice",
+        "cotton", "sugarcane", "fruit", "vegetable", "harvest", "sowing",
+        "weed", "fung", "root", "stem", "blossom", "garden", "gardening",
+        "nursery", "mulch", "nutrient", "spray", "organic", "kh", "crop",
+        "पौध", "पौधा", "पौधे", "फसल", "खेती", "किसान", "कृषि", "मिट्टी",
+        "मिट्टी", "खाद", "उर्वरक", "बीज", "पानी", "सिंच", "कीट", "रोग",
+        "पत्ता", "पत्ते", "पत्ती", "पीला", "टमाटर", "कपास", "गेहूं",
+        "धान", "बाग", "कम्पोस्ट", "जड़", "मुळ", "झाड", "झाडे", "वनस्पती",
+        "पीक", "शेती", "शेत", "शेतकरी", "माती", "सुपीकता", "खत", "बियाणे",
+        "पाणी", "सिंचन", "कीड", "रोग", "पान", "पिवळी", "टोमॅटो",
+        "कापूस", "गहू", "तांदूळ", "फळ", "भाजी", "कंपोस्ट", "फवारणी",
+    )
+    treerasa_terms = (
+        "treerasa", "tree rasa", "plantcare ai", "plant care ai",
+        "my scan", "scan history", "plant scan", "disease scan",
+        "marketplace", "my order", "orders", "my listing", "listing",
+        "vendor", "farmer account", "profile", "cart", "checkout",
+        "ट्रीरसा", "ट्री रसा", "प्लांटकेअर", "ऑर्डर", "ऑर्डर्स",
+        "माझी ऑर्डर", "माझे स्कॅन", "पीक तपासणी", "विक्रेता",
+    )
+    if any(term in text for term in agriculture_terms + treerasa_terms):
+        return True
+
+    # Permit short follow-up questions only when they clearly continue an
+    # immediately preceding agriculture/TreeRasa conversation.
+    if history:
+        previous_user_messages = [
+            str(item.get("content", "")).casefold()
+            for item in history[-6:]
+            if item.get("role") == "user"
+        ]
+        if any(any(term in previous for term in agriculture_terms + treerasa_terms)
+               for previous in previous_user_messages):
+            follow_up_starters = (
+                "what about", "and", "why", "how much", "how often", "which one",
+                "कितना", "और", "क्यों", "कसे", "किती", "मग",
+            )
+            if len(text.split()) <= 12 or text.startswith(follow_up_starters):
+                return True
+    return False
+
+
 def ask_plantcare_ai(user_input: str, language: str = "en", history: list | None = None) -> str:
     question = user_input.strip()
     if not question:
         return "Please enter a question about plants or agriculture."
 
     normalized = ' '.join(question.casefold().strip(' .,!?।').split())
+    if not _is_treerasa_or_agriculture_question(question, history):
+        return {
+            "en": "I'm PlantCare AI 🌱, TreeRasa's assistant for plant health, crops, farming, and using the TreeRasa platform. I can only help with those topics. Please ask me a plant-care, agriculture, or TreeRasa question.",
+            "hi": "मैं PlantCare AI 🌱 हूँ। मैं केवल पौधों की सेहत, फसलों, खेती और TreeRasa प्लेटफ़ॉर्म के उपयोग से जुड़े सवालों में मदद कर सकता हूँ। कृपया इन्हीं विषयों पर सवाल पूछें।",
+            "mr": "मी PlantCare AI 🌱 आहे. मी फक्त वनस्पतींचे आरोग्य, पिके, शेती आणि TreeRasa प्लॅटफॉर्मच्या वापराबद्दल मदत करू शकतो. कृपया याच विषयांशी संबंधित प्रश्न विचारा."
+        }.get(language, "I'm PlantCare AI 🌱. I can only help with plant health, crops, farming, and using TreeRasa. Please ask a question about one of those topics.")
     if normalized in {'hi', 'hii', 'hiii', 'hello', 'hey', 'namaste', 'नमस्ते', 'नमस्कार'}:
         return {'hi': 'नमस्ते! 🌱 मैं PlantCare AI हूँ। फसल, मिट्टी और पौधों की सेहत के बारे में पूछें।', 'mr': 'नमस्कार! 🌱 मी PlantCare AI आहे. पिके, माती आणि वनस्पतींच्या आरोग्याबद्दल विचारा.'}.get(language, 'Namaste! 🌱 I am PlantCare AI. Ask me about crops, soil or plant health.')
     # Curated answers for common farmer questions. These work without Gemini.
