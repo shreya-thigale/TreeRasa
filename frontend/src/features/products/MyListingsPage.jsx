@@ -19,7 +19,7 @@ export default function MyListingsPage(){
  const [stockDrafts,setStockDrafts]=useState({})
  const [stockSaving,setStockSaving]=useState({})
  const [form,setForm]=useState({title:'',description:'',listing_type:user?.role==='farmer'?'produce':'supply',category:user?.role==='farmer'?'vegetable':'fertilizer',price:'',unit:user?.role==='farmer'?'kg':'bag',stock:''})
- async function load(){try{setItems(await productsApi.mine())}catch(e){setError(e.message)}}
+ async function load(){try{const rows=await productsApi.mine();setItems(rows);setError('');return rows}catch(e){setError(e.message);throw e}}
  useEffect(()=>{load()},[])
  useEffect(()=>()=>{if(preview)URL.revokeObjectURL(preview)},[preview])
  function change(e){setForm({...form,[e.target.name]:e.target.value})}
@@ -43,8 +43,8 @@ export default function MyListingsPage(){
    await load()
   }catch(e){setError(e.message)}finally{setSaving(false)}
  }
- async function updateStock(id){const value=Number(stockDrafts[id]);if(!Number.isInteger(value)||value<0){setError('Enter a valid stock quantity.');return}setStockSaving(prev=>({...prev,[id]:true}));setError('');try{await productsApi.updateStock(id,value);setItems(prev=>prev.map(p=>p.id===id?{...p,stock:value}:p));setStockDrafts(prev=>{const next={...prev};delete next[id];return next})}catch(e){setError(e.message)}finally{setStockSaving(prev=>({...prev,[id]:false}))}}
- async function remove(id){if(!window.confirm('Remove this listing from the marketplace?'))return;try{await productsApi.remove(id);setItems(prev=>prev.filter(p=>p.id!==id));}catch(e){setError(e.message)}}
+ async function updateStock(id){const value=Number(stockDrafts[id]);if(!Number.isInteger(value)||value<0){setError('Enter a valid stock quantity.');return}setStockSaving(prev=>({...prev,[id]:true}));setError('');try{await productsApi.updateStock(id,value);await load();setStockDrafts(prev=>{const next={...prev};delete next[id];return next})}catch(e){setError(e.message)}finally{setStockSaving(prev=>({...prev,[id]:false}))}}
+ async function remove(id){if(!window.confirm('Remove this listing from the marketplace?'))return;try{await productsApi.remove(id);setItems(prev=>prev.filter(p=>p.id!==id));await load();}catch(e){setError(e.message)}}
  const imageSrc=(url)=>url?(`${API_BASE.replace(/\/$/,'').replace(/\/api$/,'')}${url}`):''
  return <div className="grid gap-6 xl:grid-cols-[.8fr_1.2fr]">
   <section className="h-fit rounded-2xl border border-stone-200/70 bg-white p-6 dark:border-white/10 dark:bg-[#17251b]">
