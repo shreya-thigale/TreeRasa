@@ -78,6 +78,12 @@ export default function ScanPage() {
     setCameraOpen(false)
   }
 
+  useEffect(() => {
+    if (!cameraOpen || !streamRef.current || !videoRef.current) return
+    videoRef.current.srcObject = streamRef.current
+    videoRef.current.play().catch(() => setCameraError('Could not start the camera preview. Please allow camera access and try again.'))
+  }, [cameraOpen])
+
   async function startCamera() {
     setCameraError('')
     if (!navigator.mediaDevices?.getUserMedia) {
@@ -92,12 +98,6 @@ export default function ScanPage() {
       })
       streamRef.current = stream
       setCameraOpen(true)
-      requestAnimationFrame(() => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream
-          videoRef.current.play().catch(() => setCameraError('Could not start the camera preview. Please allow camera access and try again.'))
-        }
-      })
     } catch (err) {
       const message = err?.name === 'NotAllowedError'
         ? 'Camera permission was denied. Allow camera access in your browser settings, then try again.'
