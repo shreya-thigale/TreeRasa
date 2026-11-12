@@ -25,7 +25,6 @@ for router in (
     scans.router,
     dashboard.router,
     notifications.router,
-    chat.router,
     chatbot.router,
 ):
 
