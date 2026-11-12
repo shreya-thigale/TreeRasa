@@ -10,6 +10,7 @@ from app.models.order import Order, OrderItem
 from app.schemas import CheckoutIn, OrderStatusIn, ReviewIn
 from app.models.review import Review
 from app.models.notification import Notification
+from app.models.user import User
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
