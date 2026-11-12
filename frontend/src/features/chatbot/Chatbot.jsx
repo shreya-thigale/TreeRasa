@@ -53,8 +53,8 @@ export default function Chatbot() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-5 pb-8">
-      <header className="overflow-hidden rounded-3xl bg-gradient-to-br from-[#123f2b] via-[#1b6543] to-[#2b8053] p-6 text-white shadow-sm sm:p-8">
+    <div className="mx-auto max-w-6xl space-y-6 pb-8">
+      <header className="overflow-hidden relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#103c2a] via-[#176342] to-[#2b8053] p-6 text-white shadow-[0_18px_50px_-28px_rgba(12,70,45,.65)] sm:p-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="grid h-12 w-12 place-items-center rounded-2xl border border-white/20 bg-white/10"><Bot size={26}/></span>
@@ -65,13 +65,13 @@ export default function Chatbot() {
         <p className="mt-4 max-w-2xl text-sm leading-6 text-emerald-50/90">{text.intro}</p>
       </header>
 
-      <section className="overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#17251b]">
+      <section className="overflow-hidden rounded-[28px] border border-stone-200/80 bg-white shadow-[0_16px_45px_-32px_rgba(20,50,35,.35)] dark:border-white/10 dark:bg-[#17251b]">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 px-5 py-4 dark:border-white/10">
-          <div className="flex items-center gap-2 text-sm font-bold"><Sparkles size={17} className="text-emerald-700 dark:text-emerald-300"/> Your farming assistant</div>
+          <div className="flex items-center gap-2 text-sm font-bold"><Sparkles size={17} className="text-emerald-700 dark:text-emerald-300"/> Your PlantCare conversation</div>
           <button type="button" onClick={resetChat} className="inline-flex items-center gap-2 rounded-xl border border-stone-200 px-3 py-2 text-xs font-semibold text-stone-600 transition hover:bg-stone-50 dark:border-white/10 dark:text-stone-200 dark:hover:bg-white/5"><RotateCcw size={14}/>{text.clear}</button>
         </div>
 
-        <div className="min-h-[390px] max-h-[min(62vh,650px)] space-y-5 overflow-y-auto bg-[#fbfdfb] p-4 sm:p-6 dark:bg-[#101b14]">
+        <div className="min-h-[430px] max-h-[min(68vh,720px)] space-y-6 overflow-y-auto bg-[radial-gradient(ellipse_at_top,_rgba(220,252,231,.42),_transparent_58%),#fbfdfb] p-4 sm:p-7 dark:bg-[#101b14]">
           <div className="flex items-start gap-3">
             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-100"><Sprout size={18}/></span>
             <div className="max-w-[88%] rounded-2xl rounded-tl-md border border-emerald-100 bg-white px-4 py-3 text-sm leading-6 text-stone-700 shadow-sm dark:border-white/10 dark:bg-[#1d3024] dark:text-stone-100">{text.welcome}</div>
@@ -87,14 +87,14 @@ export default function Chatbot() {
             </div>
           ))}
 
-          {messages.length === 0 && <div className="ml-12 space-y-3"><p className="text-xs font-bold uppercase tracking-wider text-stone-400">Suggested questions</p><div className="grid gap-2 sm:grid-cols-2">{(suggestions[language] || suggestions.en).map(item => <button key={item} type="button" onClick={() => sendMessage(item)} disabled={loading} className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-left text-sm font-medium text-emerald-900 transition hover:border-emerald-300 hover:bg-emerald-50 disabled:opacity-50 dark:border-emerald-900 dark:bg-[#1d3024] dark:text-emerald-100 dark:hover:bg-emerald-950/40">{item}</button>)}</div></div>}
+          {messages.length === 0 && <div className="ml-12 space-y-4"><div className="flex items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-stone-400">Suggested questions</p><p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Choose a topic to get started</p></div><span className="rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-200">QUICK START</span></div><div className="grid gap-3 sm:grid-cols-2">{(suggestions[language] || suggestions.en).map(item => <button key={item} type="button" onClick={() => sendMessage(item)} disabled={loading} className="group flex min-h-[76px] items-center justify-between gap-3 rounded-2xl border border-emerald-100/90 bg-white px-5 py-4 text-left text-sm font-semibold leading-6 text-emerald-950 shadow-[0_5px_18px_-16px_rgba(6,95,70,.5)] transition duration-200 hover:-translate-y-0.5 hover:border-emerald-300 hover:bg-emerald-50 hover:shadow-md disabled:opacity-50 dark:border-emerald-900 dark:bg-[#1d3024] dark:text-emerald-100 dark:hover:bg-emerald-950/40"><span>{item}</span><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-emerald-50 text-emerald-800 transition group-hover:bg-emerald-100 dark:bg-emerald-950/70 dark:text-emerald-200"><Send size={14}/></span></button>)}</div></div>}
 
           {loading && <div className="flex items-center gap-2 pl-12 text-sm text-stone-500"><LoaderCircle size={17} className="animate-spin"/>{text.thinking}</div>}
           {error && <div role="alert" className="ml-12 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100"><div className="flex items-start gap-2"><AlertCircle size={17} className="mt-0.5 shrink-0"/><p>{error}</p></div><button type="button" onClick={() => sendMessage(messages.filter(item => item.role === 'user').at(-1)?.content || '')} className="mt-3 text-xs font-bold underline">{text.retry}</button></div>}
           <div ref={bottomRef}/>
         </div>
 
-        <form onSubmit={event => { event.preventDefault(); sendMessage() }} className="flex items-end gap-2 border-t border-stone-100 bg-white p-3 sm:p-4 dark:border-white/10 dark:bg-[#17251b]">
+        <form onSubmit={event => { event.preventDefault(); sendMessage() }} className="sticky bottom-0 flex items-end gap-2 border-t border-stone-100 bg-white/95 p-3 backdrop-blur sm:p-4 dark:border-white/10 dark:bg-[#17251b]/95">
           <textarea ref={inputRef} rows={2} maxLength={1800} value={input} onChange={event => setInput(event.target.value)} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage() } }} placeholder={text.placeholder} aria-label={text.placeholder} className="min-h-12 flex-1 resize-y rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-800 outline-none transition placeholder:text-stone-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100 dark:border-white/10 dark:bg-[#1d3024] dark:text-white"/>
           <button type="submit" disabled={!input.trim() || loading} className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-2xl bg-emerald-800 px-4 text-sm font-bold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-40"><Send size={17}/><span className="hidden sm:inline">{text.send}</span></button>
         </form>
