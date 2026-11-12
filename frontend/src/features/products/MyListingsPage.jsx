@@ -43,7 +43,7 @@ export default function MyListingsPage(){
    await load()
   }catch(e){setError(e.message)}finally{setSaving(false)}
  }
- async function updateStock(id){const value=Number(stockDrafts[id]);if(!Number.isInteger(value)||value<0){setError('Enter a valid stock quantity.');return}setStockSaving(prev=>({...prev,[id]:true}));setError('');try{await productsApi.updateStock(id,value);setItems(prev=>prev.map(p=>p.id===id?{...p,stock:value}:p));setStockDrafts(prev=>({...prev,[id]:''}))}catch(e){setError(e.message)}finally{setStockSaving(prev=>({...prev,[id]:false}))}}
+ async function updateStock(id){const value=Number(stockDrafts[id]);if(!Number.isInteger(value)||value<0){setError('Enter a valid stock quantity.');return}setStockSaving(prev=>({...prev,[id]:true}));setError('');try{await productsApi.updateStock(id,value);setItems(prev=>prev.map(p=>p.id===id?{...p,stock:value}:p));setStockDrafts(prev=>{const next={...prev};delete next[id];return next})}catch(e){setError(e.message)}finally{setStockSaving(prev=>({...prev,[id]:false}))}}
  async function remove(id){if(!window.confirm('Remove this listing from the marketplace?'))return;try{await productsApi.remove(id);setItems(prev=>prev.filter(p=>p.id!==id));}catch(e){setError(e.message)}}
  const imageSrc=(url)=>url?(`${API_BASE.replace(/\/$/,'').replace(/\/api$/,'')}${url}`):''
  return <div className="grid gap-6 xl:grid-cols-[.8fr_1.2fr]">
