@@ -16,6 +16,8 @@ export default function MyListingsPage(){
  const [saving,setSaving]=useState(false)
  const [image,setImage]=useState(null)
  const [preview,setPreview]=useState('')
+ const [stockDrafts,setStockDrafts]=useState({})
+ const [stockSaving,setStockSaving]=useState({})
  const [form,setForm]=useState({title:'',description:'',listing_type:user?.role==='farmer'?'produce':'supply',category:user?.role==='farmer'?'vegetable':'fertilizer',price:'',unit:user?.role==='farmer'?'kg':'bag',stock:''})
  async function load(){try{setItems(await productsApi.mine())}catch(e){setError(e.message)}}
  useEffect(()=>{load()},[])
@@ -41,7 +43,8 @@ export default function MyListingsPage(){
    await load()
   }catch(e){setError(e.message)}finally{setSaving(false)}
  }
- async function remove(id){try{await productsApi.remove(id);await load()}catch(e){setError(e.message)}}
+ async function updateStock(id){const value=Number(stockDrafts[id]);if(!Number.isInteger(value)||value<0){setError('Enter a valid stock quantity.');return}setStockSaving(prev=>({...prev,[id]:true}));setError('');try{await productsApi.updateStock(id,value);setItems(prev=>prev.map(p=>p.id===id?{...p,stock:value}:p));setStockDrafts(prev=>({...prev,[id]:''}))}catch(e){setError(e.message)}finally{setStockSaving(prev=>({...prev,[id]:false}))}}
+ async function remove(id){if(!window.confirm('Remove this listing from the marketplace?'))return;try{await productsApi.remove(id);setItems(prev=>prev.filter(p=>p.id!==id));}catch(e){setError(e.message)}}
  const imageSrc=(url)=>url?(`${API_BASE.replace(/\/$/,'').replace(/\/api$/,'')}${url}`):''
  return <div className="grid gap-6 xl:grid-cols-[.8fr_1.2fr]">
   <section className="h-fit rounded-2xl border border-stone-200/70 bg-white p-6 dark:border-white/10 dark:bg-[#17251b]">
@@ -56,6 +59,6 @@ export default function MyListingsPage(){
     <button disabled={saving} className="w-full rounded-xl bg-forest-700 px-4 py-3 font-bold text-white disabled:opacity-50">{saving?t('saving'):t('publishListing')}</button>
    </form>
   </section>
-  <section><div className="mb-4"><h2 className="font-display text-xl font-extrabold">{t('yourListings')}</h2><p className="mt-1 text-sm text-stone-500">{t('savedPostgres')}</p></div><div className="grid gap-3 sm:grid-cols-2">{items.map(p=><article key={p.id} className="overflow-hidden rounded-2xl border border-stone-200/70 bg-white dark:border-white/10 dark:bg-[#17251b]">{p.image_url?<img src={imageSrc(p.image_url)} alt={p.title} className="h-40 w-full bg-stone-50 object-cover"/>:<div className="grid h-32 place-items-center bg-stone-50 text-4xl dark:bg-white/5">🌱</div>}<div className="flex items-center justify-between gap-3 p-4"><div><p className="font-bold">{p.title}</p><p className="mt-1 text-xs capitalize text-stone-500">{p.category} · {p.stock} {p.unit} available</p><b className="mt-2 inline-block">₹{p.price}</b></div><button onClick={()=>remove(p.id)} title="Remove listing" className="rounded-lg p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"><Trash2 size={17}/></button></div></article>)}{!items.length&&<div className="col-span-full rounded-2xl border border-dashed border-stone-300 p-10 text-center text-sm text-stone-500 dark:border-white/20">You haven't published any listings yet.</div>}</div></section>
+  <section><div className="mb-4"><h2 className="font-display text-xl font-extrabold">{t('yourListings')}</h2><p className="mt-1 text-sm text-stone-500">{t('savedPostgres')}</p></div><div className="grid gap-3 sm:grid-cols-2">{items.map(p=><article key={p.id} className="overflow-hidden rounded-2xl border border-stone-200/70 bg-white dark:border-white/10 dark:bg-[#17251b]">{p.image_url?<img src={imageSrc(p.image_url)} alt={p.title} className="h-40 w-full bg-stone-50 object-cover"/>:<div className="grid h-32 place-items-center bg-stone-50 text-4xl dark:bg-white/5">🌱</div>}<div className="space-y-3 p-4"><div className="flex items-start justify-between gap-3"><div><p className="font-bold">{p.title}</p><p className="mt-1 text-xs capitalize text-stone-500">{p.category} · {p.stock} {p.unit} available</p><b className="mt-2 inline-block">₹{p.price}</b></div><button onClick={()=>remove(p.id)} title="Remove listing" aria-label={`Remove ${p.title}`} className="rounded-lg p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"><Trash2 size={17}/></button></div><div className="flex items-center gap-2 border-t border-stone-100 pt-3 dark:border-white/10"><label className="min-w-0 flex-1"><span className="mb-1 block text-xs font-semibold text-stone-500">Update stock ({p.unit})</span><input type="number" min="0" step="1" value={stockDrafts[p.id]??p.stock} onChange={e=>setStockDrafts(prev=>({...prev,[p.id]:e.target.value}))} className="field"/></label><button type="button" onClick={()=>updateStock(p.id)} disabled={!!stockSaving[p.id]} className="mt-5 rounded-lg bg-forest-700 px-3 py-2 text-xs font-bold text-white disabled:opacity-50">{stockSaving[p.id]?"Saving…":"Update"}</button></div></div></article>)}{!items.length&&<div className="col-span-full rounded-2xl border border-dashed border-stone-300 p-10 text-center text-sm text-stone-500 dark:border-white/20">You haven't published any listings yet.</div>}</div></section>
  </div>
 }
