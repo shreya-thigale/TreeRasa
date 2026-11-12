@@ -5,6 +5,7 @@ import DashboardPage from '../features/dashboard/DashboardPage'
 import MarketplacePage from '../features/marketplace/MarketplacePage'
 import MyListingsPage from '../features/products/MyListingsPage'
 import OrdersPage from '../features/orders/OrdersPage'
+import SalesPage from '../features/dashboard/SalesPage'
 import ScanPage from '../features/scan/ScanPage'
 import ProfilePage from '../features/profile/ProfilePage'
 import AuthPage from '../pages/AuthPage'
@@ -22,7 +23,7 @@ export default function App(){
    <Route path="/marketplace/supplies" element={<MarketplacePage listingType="supply"/>}/>
    <Route path="/my-listings" element={<Protected roles={['farmer','vendor']}><MyListingsPage/></Protected>}/>
    <Route path="/orders" element={<OrdersPage/>}/>
-   <Route path="/sales" element={<OrdersPage/>}/>
+   <Route path="/sales" element={<SalesPage/>}/>
    <Route path="/profile" element={<ProfilePage/>}/>
    <Route path="/chatbot" element={<ChatbotPage/>}/>
   </Route>
